@@ -62,4 +62,6 @@ exports.down = pgm => {
     // pgm.dropConstraint('ticket', 'fk_ticket.ticket_category_category.category_id')
     // pgm.dropConstraint('ticket', 'fk_ticket.ticket_create_by_user.user_id')
     pgm.dropTable('ticket')
+    pgm.dropType('status')
+    pgm.dropType('priority')
 }
