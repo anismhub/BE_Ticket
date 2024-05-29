@@ -28,7 +28,7 @@ exports.up = pgm => {
         }
     })
     pgm.addConstraint('resolution', 'fk_resolution.resolution_ticket_ticket.ticket_id', 'FOREIGN KEY(resolution_ticket) REFERENCES ticket(ticket_id) ON UPDATE CASCADE ON DELETE CASCADE')
-    pgm.addConstraint('resolution', 'fk_resolution.resolution_resolve_by_user.user_id', 'FOREIGN KEY(resolution_resolve_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
+    pgm.addConstraint('resolution', 'fk_resolution.resolution_resolve_by_users.user_id', 'FOREIGN KEY(resolution_resolve_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
 
 }
 

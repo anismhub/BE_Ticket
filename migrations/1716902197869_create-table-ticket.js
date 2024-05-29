@@ -53,7 +53,7 @@ exports.up = pgm => {
 
     pgm.addConstraint('ticket', 'fk_ticket.ticket_department_department.department_id', 'FOREIGN KEY(ticket_department) REFERENCES department(department_id) ON UPDATE CASCADE ON DELETE CASCADE')
     pgm.addConstraint('ticket', 'fk_ticket.ticket_category_category.category_id', 'FOREIGN KEY(ticket_category) REFERENCES category(category_id) ON UPDATE CASCADE ON DELETE CASCADE')
-    pgm.addConstraint('ticket', 'fk_ticket.ticket_create_by_user.user_id', 'FOREIGN KEY(ticket_create_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
+    pgm.addConstraint('ticket', 'fk_ticket.ticket_create_by_users.user_id', 'FOREIGN KEY(ticket_create_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
 }
 
 

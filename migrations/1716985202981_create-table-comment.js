@@ -28,7 +28,7 @@ exports.up = pgm => {
         }
     })
     pgm.addConstraint('comment', 'fk_comment.comment_ticket_ticket.ticket_id', 'FOREIGN KEY(comment_ticket) REFERENCES ticket(ticket_id) ON UPDATE CASCADE ON DELETE CASCADE')
-    pgm.addConstraint('comment', 'fk_comment.comment_create_by_user.user_id', 'FOREIGN KEY(comment_create_by) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
+    pgm.addConstraint('comment', 'fk_comment.comment_create_by_users.user_id', 'FOREIGN KEY(comment_create_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
 
 }
 

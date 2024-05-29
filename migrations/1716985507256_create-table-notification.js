@@ -28,7 +28,7 @@ exports.up = pgm => {
         }
     })
     pgm.addConstraint('notification', 'fk_notification.notification_ticket_ticket.ticket_id', 'FOREIGN KEY(notification_ticket) REFERENCES ticket(ticket_id) ON UPDATE CASCADE ON DELETE CASCADE')
-    pgm.addConstraint('notification', 'fk_notification.notification_recipient_user.user_id', 'FOREIGN KEY(notification_recipient) REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
+    pgm.addConstraint('notification', 'fk_notification.notification_recipient_users.user_id', 'FOREIGN KEY(notification_recipient) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
 
 }
 
