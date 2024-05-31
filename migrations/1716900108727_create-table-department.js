@@ -14,6 +14,8 @@ exports.up = pgm => {
             notNull: true
         }
     })
+
+    pgm.sql("INSERT INTO department(department_name) VALUES ('IT'), ('GA'), ('HSE'), ('SR'), ('Procurement'), ('Operation'), ('Maintenance')")
 }
 
 exports.down = pgm => {

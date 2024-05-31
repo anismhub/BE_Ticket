@@ -2,6 +2,7 @@ const { Pool } = require('pg')
 const bcrypt = require('bcryptjs')
 const AuthorizationError = require('../exceptions/AuthorizationError')
 const InvariantError = require('../exceptions/InvariantError')
+const AuthenticationError = require('../exceptions/AuthenticationError')
 const NotFoundError = require('../exceptions/NotFoundError')
 
 class UsersService {
@@ -72,7 +73,7 @@ class UsersService {
         return result.rows[0].name
     }
 
-    async editUser({ userId, username, fullname, role, department, phoneNumber }) {
+    async editUser(userId, { username, fullname, role, department, phoneNumber }) {
         await this.verifyNewUsername(username)
         const query = {
             text: 'UPDATE users SET user_name = $1, user_login = $2, user_role = $3, user_department = $4, user_phone = $5 WHERE user_id = $6 RETURNING user_id',
@@ -109,6 +110,28 @@ class UsersService {
         if(credentialType != 'Administrator' || credentialType != 'Teknisi') {
             throw new AuthorizationError('Anda tidak berhak mengakses resource ini')
         }
+    }
+
+    async verifyCredential(username, password) {
+        const query = {
+            text: 'SELECT user_id, user_name, user_login, user_password, user_role FROM users WHERE user_login = $1',
+            values: [username]
+        }
+
+        const result = await this._pool.query(query)
+        if(!result.rowCount) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah")
+        }
+
+        const { user_id: userId, user_name: userFullName, user_login: userName, user_password: hashedPassword, user_role: userRole } = result.rows[0]
+
+        const match = await bcrypt.compare(password, hashedPassword)
+
+        if (!match) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah")
+        }
+
+        return { userId, userName, userFullName, userRole }
     }
 }
 

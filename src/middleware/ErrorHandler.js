@@ -1,5 +1,6 @@
-const ErrorHandler = (err, req, res, next) => {
-    console.log("Middleware Error Hadnling");
+const ClientError = require('../exceptions/ClientError')
+
+const ErrorHandler = (err, _req, res, _next) => {
     const errStatus = err.statusCode || 500;
     const errMsg = err.message || 'Something went wrong';
     res.status(errStatus).json({
@@ -7,6 +8,10 @@ const ErrorHandler = (err, req, res, next) => {
         status: errStatus,
         message: errMsg
     })
+
+    if (!(err instanceof ClientError)) {
+        console.log(err)
+    }
 }
 
 module.exports = ErrorHandler

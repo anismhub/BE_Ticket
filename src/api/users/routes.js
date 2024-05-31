@@ -1,10 +1,14 @@
 const router = require('express').Router()
-const verifyToken = require('../../middleware/AuthMiddleware')
+const { verifyAdminToken } = require('../../middleware/AuthMiddleware')
 const UsersService = require('../../services/UsersService')
 const UsersHandler = require('./controller')
+const UsersValidator = require('../../validator/UsersValidator')
+const TokenManager = require('../../tokenize/TokenManager')
 const usersService = new UsersService()
-const usersHandler = new UsersHandler(usersService)
+const usersHandler = new UsersHandler(usersService, UsersValidator, TokenManager)
 
-router.get('/users', verifyToken, usersHandler.getUsers)
+
+router.get('/Users', verifyAdminToken, usersHandler.getUsers)
+router.post('/Users/Auth', usersHandler.postLogin)
 
 module.exports = router
