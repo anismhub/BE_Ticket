@@ -22,6 +22,28 @@ const verifyToken = (req, _, next) => {
     }
 }
 
+const verifyClientToken = (req, _, next) => {
+    try {
+        const token = req.header('Authorization').split(' ')[1]
+        if (!token) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+        const decode = jwt.verify(token, process.env.SECRET)
+        if (!decode.userId) {
+            throw new ClientError("Invalid Token")
+        }
+        if (decode.role != 'Karyawan') {
+            throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
+        }
+        req.userId = decode.userId
+        req.userName = decode.userName
+        req.userRole = decode.userRole
+        next()
+    } catch (error) {
+        next(error)
+    }
+}
+
 const verifyTechToken = (req, _, next) => {
     try {
         const token = req.header('Authorization').split(' ')[1]
@@ -35,6 +57,9 @@ const verifyTechToken = (req, _, next) => {
         if (decode.role != 'Teknisi') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        req.userId = decode.userId
+        req.userName = decode.userName
+        req.userRole = decode.userRole
         next()
     } catch (error) {
         next(error)
@@ -54,10 +79,35 @@ const verifyAdminToken = (req, _, next) => {
         if (decode.role != 'Administrator') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        req.userId = decode.userId
+        req.userName = decode.userName
+        req.userRole = decode.userRole
         next()
     } catch (error) {
         next(error)
     }
 }
 
-module.exports = { verifyToken, verifyTechToken, verifyAdminToken}
+const verifyAdminOrTechToken = (req, _, next) => {
+    try {
+        const token = req.header('Authorization').split(' ')[1]
+        if (!token) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+        const decode = jwt.verify(token, process.env.SECRET)
+        if (!decode.userId) {
+            throw new ClientError("Invalid Token")
+        }
+        if (decode.role == 'Karyawan') {
+            throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
+        }
+        req.userId = decode.userId
+        req.userName = decode.userName
+        req.userRole = decode.userRole
+        next()
+    } catch (error) {
+        next(error)
+    }
+}
+
+module.exports = { verifyToken, verifyClientToken, verifyTechToken, verifyAdminToken, verifyAdminOrTechToken}

@@ -46,6 +46,9 @@ class TicketService {
             query.text += ` AND ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam}`
             query.values.push(`%${searchQuery.trim()}%`)
         }
+
+        const result = await this._pool.query(query)
+        return result.rows
     }
 
     async getClosedTickets(userRole, userId, searchQuery) {
@@ -63,6 +66,47 @@ class TicketService {
             const nextParam = query.values.length +1
             query.text += ` AND ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam}`
             query.values.push(`%${searchQuery.trim()}%`)
+        }
+
+        const result = await this._pool.query(query)
+        return result.rows
+    }
+
+    async addTicket(userId, { ticketSubject, ticketDescription, ticketPriority, ticketArea, ticketCategory }) {
+        const query = {
+            text: 'INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ticket_id',
+            values: [ticketSubject, ticketDescription, 'Open', ticketPriority, ticketArea, ticketCategory, userId]
+        }
+
+        const result = await this._pool.query(query)
+        if(!result.rows[0].ticket_id) {
+            throw new InvariantError('Ticket gagal ditambahkan')
+        }
+
+        return result.rows[0].ticket_id
+    }
+
+    async verifyTechAccess(ticketId, userId) {
+        let query
+        let result
+        query = {
+            text: 'SELECT ticket_id FROM ticket WHERE ticket_id = $1',
+            vales: [ticketId]
+        }
+
+        result = await this._pool.query(query)
+        if(!result.rows.length) {
+            throw NotFoundError("Ticket tidak ditemukan")
+        }
+
+        query = {
+            text: 'SELECT ticket_id FROM ticket JOIN assignment ON ticket.ticket_id = assignment.assignment_ticket WHERE ticket.ticket_id = $1 AND assignment.assignment_assigned_to = $2',
+            vales: [ticketId, userId]
+        }
+
+        result = await this._pool.query(query)
+        if(!result.rows.length) {
+            throw AuthorizationError("anda tidak berhak mengakses resource ini")
         }
     }
 }
