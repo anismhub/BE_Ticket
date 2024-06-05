@@ -1,4 +1,4 @@
-const InvariantError = require('../../exceptions/InvariantError')
+//const InvariantError = require('../../exceptions/InvariantError')
 
 
 class UsersHandler {
@@ -37,6 +37,7 @@ class UsersHandler {
 
             const response = {
                 error: false,
+                status: 200,
                 message: 'Success',
                 data: {
                     ...userCred,
