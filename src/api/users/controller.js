@@ -9,6 +9,7 @@ class UsersHandler {
 
         this.getUsers = this.getUsers.bind(this)
         this.postLogin = this.postLogin.bind(this)
+        this.getProfile = this.getProfile.bind(this)
     }
 
 
@@ -43,6 +44,21 @@ class UsersHandler {
                     ...userCred,
                     accessToken
                 }
+            }
+            res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getProfile(req, res, next) {
+        try {
+            const result = await this._service.getUserById(req.userId)
+            const response = {
+                error: false,
+                status: 200,
+                message: 'Success',
+                data: result
             }
             res.status(200).json(response)
         } catch (error) {
