@@ -101,7 +101,6 @@ class TicketService {
         }
         result = await this._pool.query(query)
         data.resolution = result.rows
-        console.log(data)
         return data
     }
 
