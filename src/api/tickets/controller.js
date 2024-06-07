@@ -1,14 +1,16 @@
 class TicketHandler {
-    constructor(ticketService, assignService, commentService, validator) {
+    constructor(ticketService, assignService, commentService, resolutionService, validator) {
         this._ticketService = ticketService
         this._assignService = assignService
         this._commentService = commentService
+        this._resolutionService = resolutionService
         this._validator = validator
 
         this.getTickets = this.getTickets.bind(this)
         this.postAddTicket = this.postAddTicket.bind(this)
-        this.putAssignTicket = this.putAssignTicket.bind(this)
+        this.postAssignTicket = this.postAssignTicket.bind(this)
         this.postAddCommentTicket = this.postAddCommentTicket.bind(this)
+        this.postCloseTicket = this.postCloseTicket.bind(this)
     }
 
     async getTickets(req, res, next) {
@@ -59,10 +61,11 @@ class TicketHandler {
         }
     }
 
-    async putAssignTicket(req, res, next) {
+    async postAssignTicket(req, res, next) {
         try {
             this._validator.validatePutAssignPayload(req.body)
 
+            await this._ticketService.updateTicket(req.params.id)
             await this._assignService.addAssignment(req.params.id, req.body.userId)
 
             const response = {
@@ -82,12 +85,32 @@ class TicketHandler {
             if (req.userRole == 'Teknisi') {
                 await this._ticketService.verifyTechAccess(req.params.id, req.userId)
             }
-            await this._commentService.postComment()
+            await this._ticketService.updateTicket(req.params.id)
+            await this._commentService.postComment(req.params.id, req.userId, req.body.content)
 
             const response = {
                 error: false,
                 status: 201,
                 message: 'Komen berhasil ditambahkan'
+            }
+            res.status(201).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async postCloseTicket(req, res, next) {
+        try {
+            this._validator.validatePostAddCommentPayload(req.body)
+            if (req.userRole == 'Teknisi') {
+                await this._ticketService.verifyTechAccess(req.params.id, req.userId)
+            }
+            await this._ticketService.closeTicket(req.params.id)
+            await this._resolutionService.addResolution(req.params.id, req.userId, req.body.content)
+            const response = {
+                error: false,
+                status: 201,
+                message: 'Ticket berhasil ditutup'
             }
             res.status(201).json(response)
         } catch (error) {

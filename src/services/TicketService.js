@@ -1,7 +1,6 @@
 const { Pool } = require('pg')
 const AuthorizationError = require('../exceptions/AuthorizationError')
 const InvariantError = require('../exceptions/InvariantError')
-const AuthenticationError = require('../exceptions/AuthenticationError')
 const NotFoundError = require('../exceptions/NotFoundError')
 
 class TicketService {
@@ -91,22 +90,47 @@ class TicketService {
         let result
         query = {
             text: 'SELECT ticket_id FROM ticket WHERE ticket_id = $1',
-            vales: [ticketId]
+            values: [ticketId]
         }
 
         result = await this._pool.query(query)
         if(!result.rows.length) {
-            throw NotFoundError("Ticket tidak ditemukan")
+            throw new NotFoundError("Ticket tidak ditemukan")
         }
 
         query = {
             text: 'SELECT ticket_id FROM ticket JOIN assignment ON ticket.ticket_id = assignment.assignment_ticket WHERE ticket.ticket_id = $1 AND assignment.assignment_assigned_to = $2',
-            vales: [ticketId, userId]
+            values: [ticketId, userId]
         }
 
         result = await this._pool.query(query)
         if(!result.rows.length) {
-            throw AuthorizationError("anda tidak berhak mengakses resource ini")
+            throw new AuthorizationError("anda tidak berhak mengakses resource ini")
+        }
+    }
+    async updateTicket(ticketId) {
+        const query = {
+            text: 'UPDATE ticket SET ticket_update_at = NOW() WHERE ticket_id = $1 RETURNING ticket_id',
+            values: [ticketId]
+        }
+
+        const result = await this._pool.query(query)
+        
+        if(!result.rows.length) {
+            throw new NotFoundError("Ticket tidak ditemukan")
+        }
+    }
+
+    async closeTicket(ticketId) {
+        const query = {
+            text: "UPDATE ticket SET ticket_status = 'Closed', ticket_update_at = NOW() WHERE ticket_id = $1 RETURNING ticket_id",
+            values: [ticketId]
+        }
+
+        const result = await this._pool.query(query)
+        
+        if(!result.rows.length) {
+            throw new NotFoundError("Ticket tidak ditemukan")
         }
     }
 }

@@ -2,12 +2,14 @@ const { verifyToken, verifyClientToken, verifyAdminToken, verifyAdminOrTechToken
 const TicketService = require('../../services/TicketService')
 const AssignService = require('../../services/AssignService')
 const CommentService = require('../../services/CommentService')
+const ResolutionService = require('../../services/ResolutionService')
 const TicketHandler = require('./controller')
 const TicketValidator = require('../../validator/TicketValidator')
 const ticketService = new TicketService()
 const assignService = new AssignService()
 const commentService = new CommentService()
-const ticketHandler = new TicketHandler(ticketService, assignService, commentService, TicketValidator)
+const resolutionService = new ResolutionService()
+const ticketHandler = new TicketHandler(ticketService, assignService, commentService, resolutionService, TicketValidator)
 
 const router = require('express').Router()
 
@@ -15,8 +17,10 @@ router.get('/Tickets', verifyToken, ticketHandler.getTickets)
 
 router.post('/Tickets', verifyClientToken, ticketHandler.postAddTicket)
 
-router.put('/Tickets/:id/Assign', verifyAdminToken, ticketHandler.putAssignTicket)
+router.post('/Tickets/:id/Assign', verifyAdminToken, ticketHandler.postAssignTicket)
 
 router.post('/Tickets/:id/Comments', verifyAdminOrTechToken, ticketHandler.postAddCommentTicket)
+
+router.post('/Tickets/:id/Close', verifyAdminOrTechToken,ticketHandler.postCloseTicket)
 
 module.exports = router
