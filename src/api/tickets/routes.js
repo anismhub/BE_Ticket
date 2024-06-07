@@ -15,6 +15,8 @@ const router = require('express').Router()
 
 router.get('/Tickets', verifyToken, ticketHandler.getTickets)
 
+router.get('/Tickets/:id', verifyToken, ticketHandler.getTicketById)
+
 router.post('/Tickets', verifyClientToken, ticketHandler.postAddTicket)
 
 router.post('/Tickets/:id/Assign', verifyAdminToken, ticketHandler.postAssignTicket)

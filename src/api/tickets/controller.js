@@ -7,6 +7,7 @@ class TicketHandler {
         this._validator = validator
 
         this.getTickets = this.getTickets.bind(this)
+        this.getTicketById = this.getTicketById.bind(this)
         this.postAddTicket = this.postAddTicket.bind(this)
         this.postAssignTicket = this.postAssignTicket.bind(this)
         this.postAddCommentTicket = this.postAddCommentTicket.bind(this)
@@ -39,6 +40,15 @@ class TicketHandler {
                 data: result
             }
             res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getTicketById(req, res, next) {
+        try {
+            const result = await this._ticketService.getTicketById(req.params.id)
+            res.status(200).send(result)
         } catch (error) {
             next(error)
         }

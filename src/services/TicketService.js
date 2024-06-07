@@ -71,6 +71,40 @@ class TicketService {
         return result.rows
     }
 
+    async getTicketById(ticketId) {
+        let query, result, data
+        query = {
+            text: 'SELECT ticket.ticket_id as "ticketId", ticket.ticket_subject as "ticketSubject", ticket.ticket_description as "ticketDescription", ticket.ticket_status as "ticketStatus", ticket.ticket_priority as "ticketPriority", area.area_name as "TicketArea", category.category_name as "ticketCategory", users.user_name as "ticketCreatedBy", ticket.ticket_create_at as "TicketCreatedAt", ticket.ticket_update_at as "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket_id = $1',
+            values: [ticketId]
+        }
+
+        result = await this._pool.query(query)
+        if(!result.rows.length) {
+            throw new NotFoundError("Ticket tidak ditemukan")
+        }
+        data = result.rows[0]
+        query = {
+            text: 'SELECT users.user_name FROM users JOIN assignment on assignment.assignment_assigned_to = users.user_id WHERE assignment.assignment_ticket = $1',
+            values: [ticketId]
+        }
+        result = await this._pool.query(query)
+        data.ticketAssignedTo = (result.rows[0] === undefined) ? null : result.rows[0].user_name
+        query = {
+            text: 'SELECT users.user_name as commentName, comment.comment_content as commentContent, comment.comment_create_at as commentTime FROM comment JOIN users ON users.user_id = comment.comment_create_by WHERE comment.comment_ticket = $1',
+            values: [ticketId]
+        }
+        result = await this._pool.query(query)
+        data.comments = result.rows
+        query = {
+            text: 'SELECT users.user_name as resolutionName, resolution.resolution_content as resolutionContent, resolution.resolution_resolve_at as resolutionTime FROM resolution JOIN users ON users.user_id = resolution.resolution_resolve_by WHERE resolution.resolution_ticket = $1',
+            values: [ticketId]
+        }
+        result = await this._pool.query(query)
+        data.resolution = result.rows
+        console.log(data)
+        return data
+    }
+
     async addTicket(userId, { ticketSubject, ticketDescription, ticketPriority, ticketArea, ticketCategory }) {
         const query = {
             text: 'INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ticket_id',

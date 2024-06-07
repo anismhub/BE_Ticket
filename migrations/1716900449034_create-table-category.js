@@ -14,6 +14,7 @@ exports.up = pgm => {
             notNull: true
         }
     })
+    pgm.sql("INSERT INTO category (category_name) VALUES ('Install'),('Config'),('Troubleshoot')")
 }
 
 

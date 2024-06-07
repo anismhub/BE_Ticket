@@ -15,10 +15,9 @@ exports.up = pgm => {
         }
     })
 
-    pgm.addConstraint('ticket', 'fk_ticket.ticket_area_area.area_id', 'FOREIGN KEY(ticket_area) REFERENCES area(area_id) ON UPDATE CASCADE ON DELETE CASCADE')
+    pgm.sql("INSERT INTO area (area_name) VALUES ('Admin Building'),('Air Compressor Room'),('CH Control Room'),('GIS'),('Jetty'),('Jakarta Office'),('Maingate Security'),('Turbine Building'),('Warehouse Building'),('Workshop Building')")
 }
 
 exports.down = pgm => {
-    pgm.dropConstraint('ticket', 'fk_ticket.ticket_area_area.area_id')
     pgm.dropTable('area')
 }
