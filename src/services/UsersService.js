@@ -30,7 +30,7 @@ class UsersService {
 
     async getUserById(userId) {
         const query = {
-            text: 'SELECT user_id as userId, user_name as userFullName, user_login as userName, user_role as userRole,department_id as departmentId, department_name as departmentName, user_phone as userPhone FROM users JOIN department ON users.user_department = department.department_id WHERE user_id = $1',
+            text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole",department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id WHERE user_id = $1',
             values: [userId]
         }
         const result = await this._pool.query(query)
