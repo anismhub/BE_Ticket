@@ -90,13 +90,13 @@ class TicketService {
         result = await this._pool.query(query)
         data.ticketAssignedTo = (result.rows[0] === undefined) ? null : result.rows[0].user_name
         query = {
-            text: 'SELECT users.user_name as commentName, comment.comment_content as commentContent, comment.comment_create_at as commentTime FROM comment JOIN users ON users.user_id = comment.comment_create_by WHERE comment.comment_ticket = $1',
+            text: 'SELECT users.user_name as "commentName", comment.comment_content as "commentContent", comment.comment_create_at as "commentTime" FROM comment JOIN users ON users.user_id = comment.comment_create_by WHERE comment.comment_ticket = $1',
             values: [ticketId]
         }
         result = await this._pool.query(query)
         data.comments = result.rows
         query = {
-            text: 'SELECT users.user_name as resolutionName, resolution.resolution_content as resolutionContent, resolution.resolution_resolve_at as resolutionTime FROM resolution JOIN users ON users.user_id = resolution.resolution_resolve_by WHERE resolution.resolution_ticket = $1',
+            text: 'SELECT users.user_name as "resolutionName", resolution.resolution_content as "resolutionContent", resolution.resolution_resolve_at as "resolutionTime" FROM resolution JOIN users ON users.user_id = resolution.resolution_resolve_by WHERE resolution.resolution_ticket = $1',
             values: [ticketId]
         }
         result = await this._pool.query(query)
