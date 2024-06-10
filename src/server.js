@@ -10,12 +10,12 @@ const TicketRoutes = require('./api/tickets/routes')
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.get('/', (_, res) => {
-    res.send("Backend Application for Ticket System")
-})
-
 app.use(UserRoutes)
 app.use(TicketRoutes)
+
+app.get('*', (_, res) => {
+    res.send("Backend Application for Ticket System")
+})
 
 app.use(ErrorHandler)
 

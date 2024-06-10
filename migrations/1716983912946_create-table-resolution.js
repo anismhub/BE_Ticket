@@ -15,7 +15,8 @@ exports.up = pgm => {
         },
         resolution_ticket: {
             type: 'INTEGER',
-            notNull: true
+            notNull: true,
+            unique: true
         },
         resolution_resolve_by: {
             type: 'INTEGER',

@@ -14,7 +14,7 @@ class ResolutionService {
 
         const result = await this._pool.query(query)
 
-        if(!result.rows[0].comment_id) {
+        if(!result.rows[0].resolution_id) {
             throw new InvariantError('Gagal close ticket')
         }
 
