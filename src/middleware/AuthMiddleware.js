@@ -32,7 +32,7 @@ const verifyClientToken = (req, _, next) => {
         if (!decode.userId) {
             throw new ClientError("Invalid Token")
         }
-        if (decode.role != 'Karyawan') {
+        if (decode.userRole != 'Karyawan') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
         req.userId = decode.userId
