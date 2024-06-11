@@ -21,7 +21,7 @@ class UsersService {
 
     async getTechUsers() {
         const query = {
-            text: 'SELECT user_id, user_name, user_login, user_role, department_id, department_name, user_phone FROM users JOIN department ON users.user_department = department.department_id WHERE user_role = $1',
+            text: 'SELECT user_id as "userId", user_name as "userFullName" FROM users WHERE user_role = $1',
             values: ['Teknisi']
         }
         const result = await this._pool.query(query)

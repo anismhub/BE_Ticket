@@ -11,5 +11,6 @@ const usersHandler = new UsersHandler(usersService, UsersValidator, TokenManager
 router.get('/Users', verifyAdminToken, usersHandler.getUsers)
 router.post('/Users/Auth', usersHandler.postLogin)
 router.get('/Users/Profile', verifyToken, usersHandler.getProfile)
+router.get('/Users/Tech', verifyAdminToken, usersHandler.getTech)
 
 module.exports = router

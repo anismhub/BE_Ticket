@@ -166,6 +166,10 @@ class TicketService {
             throw new NotFoundError("Ticket tidak ditemukan")
         }
     }
+
+    async exportResport() {
+        const result = await this._pool.query("COPY (SELECT * FROM ticket) TO STDOUT WITH (FORMAT CSV,HEADER,DELIMITER '|')")
+    }
 }
 
 module.exports = TicketService

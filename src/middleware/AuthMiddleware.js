@@ -54,7 +54,7 @@ const verifyTechToken = (req, _, next) => {
         if (!decode.userId) {
             throw new ClientError("Invalid Token")
         }
-        if (decode.role != 'Teknisi') {
+        if (decode.userRole != 'Teknisi') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
         req.userId = decode.userId
@@ -76,7 +76,7 @@ const verifyAdminToken = (req, _, next) => {
         if (!decode.userId) {
             throw new ClientError("Invalid Token")
         }
-        if (decode.role != 'Administrator') {
+        if (decode.userRole != 'Administrator') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
         req.userId = decode.userId
