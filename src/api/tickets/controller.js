@@ -1,3 +1,8 @@
+const InvariantError = require('../../exceptions/InvariantError')
+const ExcelJs = require('exceljs')
+const fs = require('fs')
+const path = require('path')
+
 class TicketHandler {
     constructor(ticketService, assignService, commentService, resolutionService, validator) {
         this._ticketService = ticketService
@@ -12,6 +17,7 @@ class TicketHandler {
         this.postAssignTicket = this.postAssignTicket.bind(this)
         this.postAddCommentTicket = this.postAddCommentTicket.bind(this)
         this.postCloseTicket = this.postCloseTicket.bind(this)
+        this.exportReport = this.exportReport.bind(this)
     }
 
     async getTickets(req, res, next) {
@@ -123,6 +129,40 @@ class TicketHandler {
                 message: 'Ticket berhasil ditutup'
             }
             res.status(201).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async exportReport(_req, res, next) {
+        try {
+            const result = await this._ticketService.exportReport()
+
+            res.setHeader('Content-disposition', 'attachment; filename=tickets.xlsx')
+            res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+            const workbook = new ExcelJs.Workbook()
+            const worksheet = workbook.addWorksheet('Ticket')
+
+            worksheet.columns = Object.keys(result[0]).map(key => ({header: key, key: key}))
+
+            worksheet.addRows(result)
+
+            const filePath = path.join(__dirname, 'export.xlsx')
+
+            await workbook.xlsx.writeFile(filePath)
+
+            res.download(filePath, 'export.xlsx', err => {
+                if(err) {
+                    throw new InvariantError("Gagal export")
+                }
+
+                fs.unlink(filePath, unlinkErr => {
+                    if (unlinkErr) {
+                        throw new InvariantError("Gagal Export")
+                    }
+                })
+            })
         } catch (error) {
             next(error)
         }

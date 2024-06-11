@@ -74,7 +74,7 @@ class TicketService {
     async getTicketById(ticketId) {
         let query, result, data
         query = {
-            text: 'SELECT ticket.ticket_id as "ticketId", ticket.ticket_subject as "ticketSubject", ticket.ticket_description as "ticketDescription", ticket.ticket_status as "ticketStatus", ticket.ticket_priority as "ticketPriority", area.area_name as "ticketArea", category.category_name as "ticketCategory", users.user_name as "ticketCreatedBy", ticket.ticket_create_at as "ticketCreatedAt", ticket.ticket_update_at as "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket_id = $1',
+            text: 'SELECT ticket.ticket_id as "ticketId", ticket.ticket_subject as "ticketSubject", ticket.ticket_description as "ticketDescription", ticket.ticket_status as "ticketStatus", ticket.ticket_priority as "ticketPriority", area.area_name as "ticketArea", category.category_name as "ticketCategory", users.user_name as "ticketCreatedBy", ticket.ticket_create_at as "ticketCreatedAt", ticket.ticket_update_at as "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket.ticket_id = $1',
             values: [ticketId]
         }
 
@@ -167,8 +167,12 @@ class TicketService {
         }
     }
 
-    async exportResport() {
-        const result = await this._pool.query("COPY (SELECT * FROM ticket) TO STDOUT WITH (FORMAT CSV,HEADER,DELIMITER '|')")
+    async exportReport() {
+        const query = 'SELECT * FROM ticket'
+        const result = await this._pool.query(query)
+        console.log(result)
+        
+        return result.rows
     }
 }
 
