@@ -15,9 +15,16 @@ class UsersHandler {
 
 
 
-    async getUsers(req, res, next) {
+    async getUsers(_req, res, next) {
         try {
-
+            const result = await this._service.getUsers()
+            const response = {
+                error: false,
+                status: 200,
+                message: 'Success',
+                data: result
+            }
+            res.status(200).json(response)
         } catch (error) {
             next(error)
         }
