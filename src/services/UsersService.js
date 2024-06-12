@@ -12,8 +12,8 @@ class UsersService {
 
     async getUsers() {
         const query = {
-            text: 'SELECT user_id, user_name, user_login, user_role, department_id, department_name, user_phone FROM users JOIN department ON users.user_department = department.department_id WHERE user_role != $1',
-            values: ['Administrator']
+            text: 'SELECT user_id, user_name, user_login, user_role, department_id, department_name, user_phone FROM users JOIN department ON users.user_department = department.department_id',
+            // values: ['Administrator']
         }
         const result = await this._pool.query(query)
         return result.rows
