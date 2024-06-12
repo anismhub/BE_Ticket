@@ -1,0 +1,6 @@
+class NotificationService {
+    constructor() {
+
+    }
+
+}
