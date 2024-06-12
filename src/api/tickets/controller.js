@@ -4,11 +4,13 @@ const fs = require('fs')
 const path = require('path')
 
 class TicketHandler {
-    constructor(ticketService, assignService, commentService, resolutionService, validator) {
+    constructor(ticketService, assignService, commentService, resolutionService, tokenService, notificationService, validator) {
         this._ticketService = ticketService
         this._assignService = assignService
         this._commentService = commentService
         this._resolutionService = resolutionService
+        this._tokenService = tokenService
+        this._notificationService = notificationService
         this._validator = validator
 
         this.getTickets = this.getTickets.bind(this)
@@ -71,7 +73,28 @@ class TicketHandler {
                 status: 201,
                 message: `Ticket telah ditambahkan dengan id #${result}`
             }
+
+            const tokens = await this._tokenService.getAdminsToken()
+            if (tokens.length) {
+                const notificationData = {
+                tokens: tokens.map(obj => obj.token),
+                notification: {
+                    title: "Ticket Baru",
+                    body: `Tiket Baru telah dibuat oleh ${req.userFullName}`
+                },
+                data: {
+                    title: "Ticket Baru",
+                    body: `Tiket Baru telah dibuat oleh ${req.userFullName}`,
+                    ticketId: `${result}`
+                }
+            }
+            this._notificationService.sendNotification(notificationData)
+            }
+            
+
             res.status(201).json(response)
+
+            
         } catch (error) {
             next(error)
         }

@@ -5,6 +5,7 @@ const initializeFirebaseSDK = require('./firebase')
 const app = express()
 const port = process.env.PORT || 3000
 const ErrorHandler = require('./middleware/ErrorHandler')
+// const NotificationMiddleware = require('./middleware/NotificationMiddleware')
 const UserRoutes = require('./api/users/routes')
 const TicketRoutes = require('./api/tickets/routes')
 
@@ -20,6 +21,7 @@ app.get('*', (_, res) => {
     res.send("Backend Application for Ticket System")
 })
 
+// app.use(NotificationMiddleware)
 app.use(ErrorHandler)
 
 app.listen(port, () => {

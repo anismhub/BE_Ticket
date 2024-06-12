@@ -15,6 +15,7 @@ const verifyToken = (req, _, next) => {
         }
         req.userId = decode.userId
         req.userName = decode.userName
+        req.userFullName = decode.userFullName
         req.userRole = decode.userRole
         next()
     } catch (error) {
@@ -37,6 +38,7 @@ const verifyClientToken = (req, _, next) => {
         }
         req.userId = decode.userId
         req.userName = decode.userName
+        req.userFullName = decode.userFullName
         req.userRole = decode.userRole
         next()
     } catch (error) {
@@ -59,6 +61,7 @@ const verifyTechToken = (req, _, next) => {
         }
         req.userId = decode.userId
         req.userName = decode.userName
+        req.userFullName = decode.userFullName
         req.userRole = decode.userRole
         next()
     } catch (error) {
@@ -81,6 +84,7 @@ const verifyAdminToken = (req, _, next) => {
         }
         req.userId = decode.userId
         req.userName = decode.userName
+        req.userFullName = decode.userFullName
         req.userRole = decode.userRole
         next()
     } catch (error) {
@@ -103,6 +107,7 @@ const verifyAdminOrTechToken = (req, _, next) => {
         }
         req.userId = decode.userId
         req.userName = decode.userName
+        req.userFullName = decode.userFullName
         req.userRole = decode.userRole
         next()
     } catch (error) {

@@ -40,7 +40,8 @@ class UsersHandler {
             const accessToken = this._tokenManager.generateToken({
                 userId: userCred.userId,
                 userName: userCred.userName,
-                userRole: userCred.userRole
+                userRole: userCred.userRole,
+                userFullName: userCred.userFullName
             })
 
             const response = {
