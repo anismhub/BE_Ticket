@@ -1,6 +1,5 @@
 const Joi = require('joi')
 const InvariantError = require('../exceptions/InvariantError')
-const { password } = require('pg/lib/defaults')
 
 const UserSchema = {
     loginUserPayloadSchema: Joi.object({
@@ -8,12 +7,12 @@ const UserSchema = {
         password: Joi.string().required()
     }),
     addUserPayloadSchema: Joi.object({
-        username: Joi.string().required,
-        fullname: Joi.string().required,
-        password: Joi.string().required,
+        username: Joi.string().required(),
+        fullname: Joi.string().required(),
+        password: Joi.string().required(),
         role: Joi.string().required().valid('Administrator', 'Teknisi', 'Karyawan'),
-        department: Joi.number().required,
-        phoneNumber: Joi.string().required
+        department: Joi.number().required(),
+        phoneNumber: Joi.string().required()
     })
 }
 
@@ -27,7 +26,7 @@ const UserValidator = {
     },
     validateAddUserPayload: payload => {
         const validationResult = UserSchema.addUserPayloadSchema.validate(payload)
-        
+
         if (validationResult.error) {
             throw new InvariantError(validationResult.error.message)
         }
