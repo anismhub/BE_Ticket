@@ -70,7 +70,7 @@ class UsersService {
             throw new InvariantError('User Gagal ditambah')
         }
 
-        return result.rows[0].name
+        return result.rows[0].user_id
     }
 
     async editUser(userId, { username, fullname, role, department, phoneNumber }) {
