@@ -11,9 +11,8 @@ class UsersHandler {
         this.postLogin = this.postLogin.bind(this)
         this.getProfile = this.getProfile.bind(this)
         this.getTech = this.getTech.bind(this)
+        this.postAddUser = this.postAddUser.bind(this)
     }
-
-
 
     async getUsers(_req, res, next) {
         try {
@@ -84,6 +83,23 @@ class UsersHandler {
                 data: result
             }
             res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async postAddUser(req, res, next) {
+        try {
+            this._validator.validateAddUserPayload(req.body)
+            
+            const result = await this._service.addUser(req.body)
+
+            const response = {
+                error: false,
+                status: 201,
+                message: `Pengguna telah dibuat dengan id #${result}`
+            }
+            res.status(201).json(response)
         } catch (error) {
             next(error)
         }
