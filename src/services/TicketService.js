@@ -154,6 +154,19 @@ class TicketService {
         }
     }
 
+    async updateTicketToOnProgress(ticketId) {
+        const query = {
+            text: "UPDATE ticket SET ticket_status = 'On Progress',ticket_update_at = NOW() WHERE ticket_id = $1 RETURNING ticket_id",
+            values: [ticketId]
+        }
+
+        const result = await this._pool.query(query)
+        
+        if(!result.rows.length) {
+            throw new NotFoundError("Ticket tidak ditemukan")
+        }
+    }
+
     async closeTicket(ticketId) {
         const query = {
             text: "UPDATE ticket SET ticket_status = 'Closed', ticket_update_at = NOW() WHERE ticket_id = $1 RETURNING ticket_id",

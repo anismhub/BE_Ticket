@@ -81,7 +81,7 @@ class TicketHandler {
         try {
             this._validator.validatePutAssignPayload(req.body)
 
-            await this._ticketService.updateTicket(req.params.id)
+            await this._ticketService.updateTicketToOnProgress(req.params.id)
             await this._assignService.addAssignment(req.params.id, req.body.userId)
 
             const response = {
