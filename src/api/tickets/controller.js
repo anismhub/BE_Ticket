@@ -56,7 +56,13 @@ class TicketHandler {
     async getTicketById(req, res, next) {
         try {
             const result = await this._ticketService.getTicketById(req.params.id)
-            res.status(200).send(result)
+            const response = {
+                error: false,
+                status: 200,
+                message: 'Success',
+                data: result
+            }
+            res.status(200).send(response)
         } catch (error) {
             next(error)
         }
