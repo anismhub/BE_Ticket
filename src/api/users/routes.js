@@ -18,6 +18,8 @@ router.post('/Users/Token', verifyToken, usersHandler.postToken)
 router.post('/Users/Password', verifyToken, usersHandler.postChangePassword)
 router.get('/Users/:id', verifyToken, usersHandler.getUserById)
 router.post('/Users/:id', verifyAdminToken, usersHandler.postEditUser)
+router.delete('/Users/:id', verifyAdminToken, usersHandler.deleteUser)
+
 
 
 module.exports = router

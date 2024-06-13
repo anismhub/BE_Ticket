@@ -10,10 +10,10 @@ class UsersService {
         this._pool = new Pool()
     }
 
-    async getUsers() {
+    async getUsers(userId) {
         const query = {
-            text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole", department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id',
-            // values: ['Administrator']
+            text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole", department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id WHERE users.user_status = TRUE AND users.user_id != $1',
+            values: [userId]
         }
         const result = await this._pool.query(query)
         return result.rows
@@ -21,7 +21,7 @@ class UsersService {
 
     async getTechUsers() {
         const query = {
-            text: 'SELECT user_id as "userId", user_name as "userFullName" FROM users WHERE user_role = $1',
+            text: 'SELECT user_id as "userId", user_name as "userFullName" FROM users WHERE user_role = $1 AND user_status = TRUE',
             values: ['Teknisi']
         }
         const result = await this._pool.query(query)
@@ -30,7 +30,7 @@ class UsersService {
 
     async getUserById(userId) {
         const query = {
-            text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole",department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id WHERE user_id = $1',
+            text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole",department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id WHERE user_id = $1 AND user_status = TRUE',
             values: [userId]
         }
         const result = await this._pool.query(query)
@@ -91,6 +91,21 @@ class UsersService {
         return result.rows[0].user_id
     }
 
+    async deleteUser(userId) {
+        const query = {
+            text: 'UPDATE users SET user_status = FALSE where user_id = $1 RETURNING user_id',
+            values: [userId]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rows.length) {
+            throw new NotFoundError('Gagal menghapus User Id tidak ditemukan')
+        }
+
+        return result.rows[0].user_id
+    }
+
     async verifyNewUsername(username) {
         const query = {
             text: 'SELECT user_name FROM users WHERE user_name = $1',
@@ -118,7 +133,7 @@ class UsersService {
 
     async verifyCredential(username, password) {
         const query = {
-            text: 'SELECT user_id, user_name, user_login, user_password, user_role FROM users WHERE user_login = $1',
+            text: 'SELECT user_id, user_name, user_login, user_password, user_role FROM users WHERE user_login = $1 AND user_status = TRUE',
             values: [username]
         }
 
