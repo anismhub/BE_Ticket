@@ -15,11 +15,12 @@ class UsersHandler {
         this.postAddUser = this.postAddUser.bind(this)
         this.postEditUser = this.postEditUser.bind(this)
         this.postChangePassword = this.postChangePassword.bind(this)
+        this.deleteUser = this.deleteUser.bind(this)
     }
 
-    async getUsers(_req, res, next) {
+    async getUsers(req, res, next) {
         try {
-            const result = await this._service.getUsers()
+            const result = await this._service.getUsers(req.userId)
             const response = {
                 error: false,
                 status: 200,
@@ -135,7 +136,7 @@ class UsersHandler {
                 status: 201,
                 message: `Pengguna dengan id #${result} telah diubah `
             }
-            res.status(201).send(response)
+            res.status(201).json(response)
         } catch (error) {
             next(error)
         }
@@ -152,7 +153,22 @@ class UsersHandler {
                 status: 201,
                 message: `User #${result} Berhasil ganti password`
             }
-            res.status(201).send(response)
+            res.status(201).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deleteUser(req, res, next) {
+        try {
+            const result = await this._service.deleteUser(req.params.id)
+
+            const response = {
+                error: false,
+                status: 200,
+                message: `User #${result} Berhasil dihapus`
+            }
+            res.status(200).json(response)
         } catch (error) {
             next(error)
         }
