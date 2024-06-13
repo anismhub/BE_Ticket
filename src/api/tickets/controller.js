@@ -80,25 +80,38 @@ class TicketHandler {
                 message: `Ticket telah ditambahkan dengan id #${result}`
             }
 
-            const tokens = await this._tokenService.getAdminsToken()
-            tokens.forEach(token => {
-                const notificationData = {
-                    token: token.token,
-                    notification: {
-                        title: "Ticket Baru",
-                        body: `Tiket Baru telah dibuat oleh ${req.userFullName}`
-                    },
-                    data: {
-                        title: "Ticket Baru",
-                        body: `Tiket Baru telah dibuat oleh ${req.userFullName}`,
-                        ticketId: `${result}`
-                    }
-                }
-                this._notificationService.sendNotification(notificationData)
-            })
-            
-
             res.status(201).json(response)
+
+            this._tokenService.getAdminsToken()
+            .then(tokens => {
+                const notificationPromises = tokens.map(token => {
+                    const notificationData = {
+                        token: token.token,
+                        notification: {
+                            title: "Ticket Baru",
+                            body: `Tiket Baru telah dibuat oleh ${req.userFullName}`
+                        },
+                        data: {
+                            title: "Ticket Baru",
+                            body: `Tiket Baru telah dibuat oleh ${req.userFullName}`,
+                            ticketId: `${result}`
+                        }
+                    }
+                    
+                    const promises = [this._notificationService.saveNotification(token.userId, result, notificationData.data.body)]
+
+                    if (token.token) {
+                        promises.push(this._notificationService.sendNotification(notificationData))
+                    }
+
+                    return Promise.all(promises)
+                })
+                
+                return Promise.all(notificationPromises)
+            })
+            .catch(error => {
+                console.error('Failed to send notifications:', error)
+            })
 
             
         } catch (error) {
@@ -119,6 +132,36 @@ class TicketHandler {
                 message: `berhasil menugaskan Teknisi#${req.body.userId} ke Ticket#${req.params.id}`
             }
             res.status(201).json(response)
+
+            this._tokenService.getAssignedToken(req.params.id)
+            .then(tokens => {
+                return Promise.all(tokens.map(token => {
+                    let notificationData = {
+                        token: token.token,
+                        notification: {
+                            title: "Update Ticket",
+                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`
+                        },
+                        data: {
+                            title: "Update Ticket",
+                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`,
+                            ticketId: `${req.params.id}`
+                        }
+                    }
+                    if(token.userRole == 'Karyawan') {
+                        notificationData.notification.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
+                        notificationData.data.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
+                    }
+
+                    const promises = [this._notificationService.saveNotification(token.userId, result, notificationData.data.body)]
+
+                    if (token.token) {
+                        promises.push(this._notificationService.sendNotification(notificationData))
+                    }
+
+                    return Promise.all(promises)
+                }))
+            })
         } catch (error) {
             next(error)
         }

@@ -24,7 +24,18 @@ class TokenService {
     }
 
     async getAdminsToken() {
-        const query = `SELECT token.token_user as "userId", token.token_value as token FROM token JOIN users ON users.user_id = token.token_user WHERE users.user_role = 'Administrator'`
+        const query = `SELECT users.user_id as "userId", token.token_value as token FROM users LEFT JOIN token ON users.user_id = token.token_user WHERE users.user_role = 'Administrator' and users.user_status = TRUE`
+        const result = await this._pool.query(query)
+
+        return result.rows
+    }
+
+    async getAssignedToken(ticketId) {
+        const query = {
+            text: `SELECT u.user_id as "userId", t.token_value as token, users.user_role as "userRole" FROM (SELECT ticket_create_by AS user_id FROM ticket WHERE ticket_id = $1 UNION SELECT assignment_assigned_to AS user_id FROM assignment WHERE assignment_ticket = $1) u LEFT JOIN token t ON u.user_id = t.token_user JOIN users ON u.user_id = users.user_id`,
+            values: [ticketId]
+        }
+
         const result = await this._pool.query(query)
 
         return result.rows

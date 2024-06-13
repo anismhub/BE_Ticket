@@ -23,6 +23,10 @@ const UserSchema = {
     }),
     changePasswordPayloadSchema: Joi.object({
         password: Joi.string().required()
+    }),
+    postTokenPayloadSchema: Joi.object({
+        deviceId: Joi.string().required(),
+        token: Joi.string().required()
     })
 }
 
@@ -51,6 +55,13 @@ const UserValidator = {
     validateChangePasswordPayload: payload => {
         const validationResult = UserSchema.changePasswordPayloadSchema.validate(payload)
 
+        if (validationResult.error) {
+            throw new InvariantError(validationResult.error.message)
+        }
+    },
+    validatePostTokenPayload: payload => {
+        const validationResult = UserSchema.postTokenPayloadSchema.validate(payload)
+        
         if (validationResult.error) {
             throw new InvariantError(validationResult.error.message)
         }

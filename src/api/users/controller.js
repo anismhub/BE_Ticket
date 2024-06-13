@@ -2,8 +2,9 @@
 
 
 class UsersHandler {
-    constructor(service, validator, tokenManager) {
+    constructor(service, tokenService, validator, tokenManager) {
         this._service = service
+        this._tokenService = tokenService
         this._validator = validator
         this._tokenManager = tokenManager
 
@@ -15,6 +16,7 @@ class UsersHandler {
         this.postAddUser = this.postAddUser.bind(this)
         this.postEditUser = this.postEditUser.bind(this)
         this.postChangePassword = this.postChangePassword.bind(this)
+        this.postToken = this.postToken.bind(this)
     }
 
     async getUsers(_req, res, next) {
@@ -153,6 +155,25 @@ class UsersHandler {
                 message: `User #${result} Berhasil ganti password`
             }
             res.status(201).send(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async postToken(req, res, next) {
+        try {
+            await this._validator.validatePostTokenPayload(req.body)
+
+            const { deviceId, token} = req.body
+
+            await this._tokenService.saveToken(req.userId, deviceId, token)
+
+            const response = {
+                error: false,
+                status: 201,
+                message: "Success"
+            }
+            res.status(201).json(response)
         } catch (error) {
             next(error)
         }
