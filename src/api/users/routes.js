@@ -12,9 +12,10 @@ router.post('/Users', verifyAdminToken, usersHandler.postAddUser)
 router.post('/Users/Auth', usersHandler.postLogin)
 router.get('/Users/Profile', verifyToken, usersHandler.getProfile)
 router.get('/Users/Tech', verifyAdminToken, usersHandler.getTech)
+router.post('/Users/Token')
+router.post('/Users/Password', verifyToken, usersHandler.postChangePassword)
 router.get('/Users/:id', verifyToken, usersHandler.getUserById)
-router.post('/Users/:id/Edit', verifyAdminToken, usersHandler.postEditUser)
-router.post('/Users/:id/Password', verifyToken, usersHandler.postChangePassword)
+router.post('/Users/:id', verifyAdminToken, usersHandler.postEditUser)
 
 
 module.exports = router
