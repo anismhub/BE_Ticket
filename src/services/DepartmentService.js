@@ -10,3 +10,5 @@ class DepartmentService {
         return result.rows
     }
 }
+
+module.exports = DepartmentService

@@ -8,12 +8,14 @@ const ErrorHandler = require('./middleware/ErrorHandler')
 // const NotificationMiddleware = require('./middleware/NotificationMiddleware')
 const UserRoutes = require('./api/users/routes')
 const TicketRoutes = require('./api/tickets/routes')
+const resourcesRoutes = require('./api/resources/routes')
 
 initializeFirebaseSDK()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+app.use(resourcesRoutes)
 app.use(UserRoutes)
 app.use(TicketRoutes)
 
