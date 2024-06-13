@@ -13,6 +13,8 @@ class UsersHandler {
         this.getProfile = this.getProfile.bind(this)
         this.getTech = this.getTech.bind(this)
         this.postAddUser = this.postAddUser.bind(this)
+        this.postEditUser = this.postEditUser.bind(this)
+        this.postChangePassword = this.postChangePassword.bind(this)
     }
 
     async getUsers(_req, res, next) {
@@ -117,6 +119,40 @@ class UsersHandler {
                 message: `Pengguna telah dibuat dengan id #${result}`
             }
             res.status(201).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async postEditUser(req, res, next) {
+        try {
+            this._validator.validateEditUserPayload(req.body)
+    
+            const result = await this._service.editUser(req.params.id, req.body)
+    
+            const response = {
+                error: false,
+                status: 201,
+                message: `Pengguna dengan id #${result} telah diubah `
+            }
+            res.status(201).send(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async postChangePassword(req, res, next) {
+        try {
+            this._validator.validateChangePasswordPayload(req.body)
+
+            const result = await this._service.changeUserPassword(req.params.id, req.body.password)
+
+            const response = {
+                error: false,
+                status: 201,
+                message: `User #${result} Berhasil ganti password`
+            }
+            res.status(201).send(response)
         } catch (error) {
             next(error)
         }

@@ -54,6 +54,8 @@ class UsersService {
         if (!result.rows.length) {
             throw new NotFoundError('Gagal memperbarui Password. Id tidak ditemukan')
         }
+
+        return result.rows[0].user_id
     }
 
     async addUser({ username, fullname, password, role, department, phoneNumber}) {
@@ -85,6 +87,8 @@ class UsersService {
         if (!result.rows.length) {
             throw new NotFoundError('Gagal memperbarui User. Id tidak ditemukan')
         }
+
+        return result.rows[0].user_id
     }
 
     async verifyNewUsername(username) {
