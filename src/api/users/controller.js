@@ -8,6 +8,7 @@ class UsersHandler {
         this._tokenManager = tokenManager
 
         this.getUsers = this.getUsers.bind(this)
+        this.getUserById = this.getUserById.bind(this)
         this.postLogin = this.postLogin.bind(this)
         this.getProfile = this.getProfile.bind(this)
         this.getTech = this.getTech.bind(this)
@@ -24,6 +25,21 @@ class UsersHandler {
                 data: result
             }
             res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getUserById(req, res, next) {
+        try {
+            const result = await this._service.getUserById(req.params.id)
+                const response = {
+                    error: false,
+                    status: 200,
+                    message: 'Success',
+                    data: result
+                }
+                res.status(200).send(response)
         } catch (error) {
             next(error)
         }
