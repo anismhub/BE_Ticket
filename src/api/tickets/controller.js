@@ -81,21 +81,21 @@ class TicketHandler {
             }
 
             const tokens = await this._tokenService.getAdminsToken()
-            if (tokens.length) {
+            tokens.forEach(token => {
                 const notificationData = {
-                tokens: tokens.map(obj => obj.token),
-                notification: {
-                    title: "Ticket Baru",
-                    body: `Tiket Baru telah dibuat oleh ${req.userFullName}`
-                },
-                data: {
-                    title: "Ticket Baru",
-                    body: `Tiket Baru telah dibuat oleh ${req.userFullName}`,
-                    ticketId: `${result}`
+                    token: token.token,
+                    notification: {
+                        title: "Ticket Baru",
+                        body: `Tiket Baru telah dibuat oleh ${req.userFullName}`
+                    },
+                    data: {
+                        title: "Ticket Baru",
+                        body: `Tiket Baru telah dibuat oleh ${req.userFullName}`,
+                        ticketId: `${result}`
+                    }
                 }
-            }
-            this._notificationService.sendNotification(notificationData)
-            }
+                this._notificationService.sendNotification(notificationData)
+            })
             
 
             res.status(201).json(response)
