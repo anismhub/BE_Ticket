@@ -7,12 +7,14 @@ const TokenManager = require('../../tokenize/TokenManager')
 const usersService = new UsersService()
 const usersHandler = new UsersHandler(usersService, UsersValidator, TokenManager)
 
-
 router.get('/Users', verifyAdminToken, usersHandler.getUsers)
 router.post('/Users', verifyAdminToken, usersHandler.postAddUser)
-router.get('/Users/:id', verifyToken, usersHandler.getUserById)
 router.post('/Users/Auth', usersHandler.postLogin)
 router.get('/Users/Profile', verifyToken, usersHandler.getProfile)
 router.get('/Users/Tech', verifyAdminToken, usersHandler.getTech)
+router.get('/Users/:id', verifyToken, usersHandler.getUserById)
+router.post('/Users/:id/Edit', verifyAdminToken, usersHandler.postEditUser)
+router.post('/Users/:id/Password', verifyToken, usersHandler.postChangePassword)
+
 
 module.exports = router
