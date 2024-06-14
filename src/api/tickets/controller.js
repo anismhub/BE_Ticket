@@ -206,9 +206,10 @@ class TicketHandler {
         }
     }
 
-    async exportReport(_req, res, next) {
+    async exportReport(req, res, next) {
         try {
-            const result = await this._ticketService.exportReport()
+            this._validator.validateGetExportPayload(req.query)
+            const result = await this._ticketService.exportReport(req.query.startDate, req.query.endDate)
 
             res.setHeader('Content-disposition', 'attachment; filename=tickets.xlsx')
             res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

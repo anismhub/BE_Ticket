@@ -74,7 +74,7 @@ class TicketService {
     async getTicketById(ticketId) {
         let query, result, data
         query = {
-            text: 'SELECT ticket.ticket_id as "ticketId", ticket.ticket_subject as "ticketSubject", ticket.ticket_description as "ticketDescription", ticket.ticket_status as "ticketStatus", ticket.ticket_priority as "ticketPriority", area.area_name as "ticketArea", category.category_name as "ticketCategory", users.user_name as "ticketCreatedBy", ticket.ticket_create_at as "ticketCreatedAt", ticket.ticket_update_at as "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket.ticket_id = $1',
+            text: 'SELECT ticket.ticket_id AS "ticketId", ticket.ticket_subject AS "ticketSubject", ticket.ticket_description AS "ticketDescription", ticket.ticket_status AS "ticketStatus", ticket.ticket_priority AS "ticketPriority", area.area_name AS "ticketArea", category.category_name AS "ticketCategory", users.user_name AS "ticketCreatedBy", department.department_name AS "ticketDepartmentBy", ticket.ticket_create_at AS "ticketCreatedAt", ticket.ticket_update_at AS "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN department ON department.department_id = users.user_department JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket.ticket_id = 1;',
             values: [ticketId]
         }
 
@@ -180,8 +180,11 @@ class TicketService {
         }
     }
 
-    async exportReport() {
-        const query = 'SELECT * FROM ticket'
+    async exportReport(startDate, endDate) {
+        const query = {
+            text : "SELECT * FROM ticket WHERE ticket_create_at::date BETWEEN $1 AND $2",
+            values: [startDate, endDate]
+        }
         const result = await this._pool.query(query)
         console.log(result)
         

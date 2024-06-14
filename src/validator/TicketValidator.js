@@ -18,6 +18,10 @@ const TicketSchema = {
     }),
     postAddCommentPayloadSchema: Joi.object({
         content: Joi.string().required()
+    }),
+    getExportPayloadSchema: Joi.object({
+        startDate: Joi.date().required(),
+        endDate: Joi.date().required()
     })
 }
 
@@ -45,6 +49,13 @@ const TicketValidator = {
     },
     validatePostAddCommentPayload: payload => {
         const validationResult = TicketSchema.postAddCommentPayloadSchema.validate(payload)
+
+        if (validationResult.error) {
+            throw new InvariantError(validationResult.error.message)
+        }
+    },
+    validateGetExportPayload: payload => {
+        const validationResult = TicketSchema.getExportPayloadSchema.validate(payload)
 
         if (validationResult.error) {
             throw new InvariantError(validationResult.error.message)
