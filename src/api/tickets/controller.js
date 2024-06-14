@@ -153,7 +153,7 @@ class TicketHandler {
                         notificationData.data.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
                     }
 
-                    const promises = [this._notificationService.saveNotification(token.userId, result, notificationData.data.body)]
+                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
 
                     if (token.token) {
                         promises.push(this._notificationService.sendNotification(notificationData))
