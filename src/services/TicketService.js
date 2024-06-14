@@ -21,7 +21,7 @@ class TicketService {
 
         if(searchQuery) {
             const nextParam = query.values.length +1
-            query.text += ` AND ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam}`
+            query.text += ` AND (ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam})`
             query.values.push(`%${searchQuery.trim()}%`)
         }
 
@@ -42,7 +42,7 @@ class TicketService {
 
         if(searchQuery) {
             const nextParam = query.values.length +1
-            query.text += ` AND ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam}`
+            query.text += ` AND (ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam})`
             query.values.push(`%${searchQuery.trim()}%`)
         }
 
@@ -63,7 +63,7 @@ class TicketService {
 
         if(searchQuery) {
             const nextParam = query.values.length +1
-            query.text += ` AND ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam}`
+            query.text += ` AND (ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam})`
             query.values.push(`%${searchQuery.trim()}%`)
         }
 
