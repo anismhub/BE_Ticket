@@ -10,10 +10,15 @@ class UsersService {
         this._pool = new Pool()
     }
 
-    async getUsers(userId) {
+    async getUsers(userId, searchQuery) {
         const query = {
             text: 'SELECT user_id as "userId", user_name as "userFullName", user_login as "userName", user_role as "userRole", department_id as "departmentId", department_name as "departmentName", user_phone as "userPhone" FROM users JOIN department ON users.user_department = department.department_id WHERE users.user_status = TRUE AND users.user_id != $1',
             values: [userId]
+        }
+        if (searchQuery) {
+            const nextParam = query.values.length +1
+            query.text += ` AND (user_id::text ILIKE $${nextParam} OR user_name ILIKE $${nextParam} OR user_login ILIKE $${nextParam} OR user_role::text ILIKE $${nextParam} OR department_name ILIKE $${nextParam})`
+            query.values.push(`%${searchQuery.trim()}%`)            
         }
         const result = await this._pool.query(query)
         return result.rows

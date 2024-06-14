@@ -22,7 +22,7 @@ class UsersHandler {
 
     async getUsers(req, res, next) {
         try {
-            const result = await this._service.getUsers(req.userId)
+            const result = await this._service.getUsers(req.userId, req.query.search)
             const response = {
                 error: false,
                 status: 200,
