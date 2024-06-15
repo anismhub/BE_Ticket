@@ -2,10 +2,18 @@ const jwt = require('jsonwebtoken')
 const AuthenticationError =require('../exceptions/AuthenticationError')
 const AuthorizationError =require('../exceptions/AuthorizationError')
 const ClientError =require('../exceptions/ClientError')
+const UsersService = require('../services/UsersService')
+const usersService = new UsersService()
 
-const verifyToken = (req, _, next) => {
+const verifyToken = async (req, _, next) => {
     try {
-        const token = req.header('Authorization').split(' ')[1]
+        const authHeader = req.header('Authorization')
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+
+        const token = authHeader.split(' ')[1]
         if (!token) {
             throw new AuthenticationError("Unauthenticated")
         }
@@ -13,6 +21,7 @@ const verifyToken = (req, _, next) => {
         if (!decode.userId) {
             throw new ClientError("Invalid Token")
         }
+        await usersService.verifyActiveUser(decode.userId)
         req.userId = decode.userId
         req.userName = decode.userName
         req.userFullName = decode.userFullName
@@ -23,9 +32,15 @@ const verifyToken = (req, _, next) => {
     }
 }
 
-const verifyClientToken = (req, _, next) => {
+const verifyClientToken = async (req, _, next) => {
     try {
-        const token = req.header('Authorization').split(' ')[1]
+        const authHeader = req.header('Authorization')
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+
+        const token = authHeader.split(' ')[1]
         if (!token) {
             throw new AuthenticationError("Unauthenticated")
         }
@@ -36,6 +51,7 @@ const verifyClientToken = (req, _, next) => {
         if (decode.userRole != 'Karyawan') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        await usersService.verifyActiveUser(decode.userId)
         req.userId = decode.userId
         req.userName = decode.userName
         req.userFullName = decode.userFullName
@@ -46,9 +62,15 @@ const verifyClientToken = (req, _, next) => {
     }
 }
 
-const verifyTechToken = (req, _, next) => {
+const verifyTechToken = async (req, _, next) => {
     try {
-        const token = req.header('Authorization').split(' ')[1]
+        const authHeader = req.header('Authorization')
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+
+        const token = authHeader.split(' ')[1]
         if (!token) {
             throw new AuthenticationError("Unauthenticated")
         }
@@ -59,6 +81,7 @@ const verifyTechToken = (req, _, next) => {
         if (decode.userRole != 'Teknisi') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        await usersService.verifyActiveUser(decode.userId)
         req.userId = decode.userId
         req.userName = decode.userName
         req.userFullName = decode.userFullName
@@ -69,9 +92,15 @@ const verifyTechToken = (req, _, next) => {
     }
 }
 
-const verifyAdminToken = (req, _, next) => {
+const verifyAdminToken = async (req, _, next) => {
     try {
-        const token = req.header('Authorization').split(' ')[1]
+        const authHeader = req.header('Authorization')
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+
+        const token = authHeader.split(' ')[1]
         if (!token) {
             throw new AuthenticationError("Unauthenticated")
         }
@@ -82,6 +111,7 @@ const verifyAdminToken = (req, _, next) => {
         if (decode.userRole != 'Administrator') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        await usersService.verifyActiveUser(decode.userId)
         req.userId = decode.userId
         req.userName = decode.userName
         req.userFullName = decode.userFullName
@@ -92,9 +122,15 @@ const verifyAdminToken = (req, _, next) => {
     }
 }
 
-const verifyAdminOrTechToken = (req, _, next) => {
+const verifyAdminOrTechToken = async (req, _, next) => {
     try {
-        const token = req.header('Authorization').split(' ')[1]
+        const authHeader = req.header('Authorization')
+
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            throw new AuthenticationError("Unauthenticated")
+        }
+
+        const token = authHeader.split(' ')[1]
         if (!token) {
             throw new AuthenticationError("Unauthenticated")
         }
@@ -105,6 +141,7 @@ const verifyAdminOrTechToken = (req, _, next) => {
         if (decode.role == 'Karyawan') {
             throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
         }
+        await usersService.verifyActiveUser(decode.userId)
         req.userId = decode.userId
         req.userName = decode.userName
         req.userFullName = decode.userFullName

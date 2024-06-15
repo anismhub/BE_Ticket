@@ -182,6 +182,32 @@ class TicketHandler {
                 message: 'Komen berhasil ditambahkan'
             }
             res.status(201).json(response)
+
+            this._tokenService.getCommentUserToken(req.params.id, req.userId)
+            .then(tokens => {
+                return Promise.all(tokens.map(token => {
+                    const notificationData = {
+                        token: token.token,
+                        notification: {
+                            title: "Update Ticket",
+                            body: `Ada Komen baru pada Ticket#${req.params.id}`
+                        },
+                        data: {
+                            title: "Update Ticket",
+                            body: `Ada Komen baru pada Ticket#${req.params.id}`,
+                            ticketId: `${req.params.id}`
+                        }
+                    }
+
+                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
+
+                    if (token.token) {
+                        promises.push(this._notificationService.sendNotification(notificationData))
+                    }
+
+                    return Promise.all(promises)
+                }))
+            })
         } catch (error) {
             next(error)
         }
@@ -201,6 +227,32 @@ class TicketHandler {
                 message: 'Ticket berhasil ditutup'
             }
             res.status(201).json(response)
+
+            this._tokenService.getTicketUserToken(req.params.id)
+            .then(tokens => {
+                return Promise.all(tokens.map(token => {
+                    const notificationData = {
+                        token: token.token,
+                        notification: {
+                            title: "Update Ticket",
+                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`
+                        },
+                        data: {
+                            title: "Update Ticket",
+                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`,
+                            ticketId: `${req.params.id}`
+                        }
+                    }
+
+                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
+
+                    if (token.token) {
+                        promises.push(this._notificationService.sendNotification(notificationData))
+                    }
+
+                    return Promise.all(promises)
+                }))
+            })
         } catch (error) {
             next(error)
         }
