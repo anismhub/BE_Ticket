@@ -157,6 +157,19 @@ class UsersService {
 
         return { userId, userName, userFullName, userRole }
     }
+
+    async verifyActiveUser(userId) {
+        const query = {
+            text: 'SELECT user_id from users WHERE user_id = $1 AND user_status = TRUE',
+            values: [userId]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rowCount) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah")
+        }
+    }
 }
 
 module.exports = UsersService

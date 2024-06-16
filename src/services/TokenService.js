@@ -41,6 +41,28 @@ class TokenService {
         return result.rows
     }
 
+    async getTicketUserToken(ticketId) {
+        const query = {
+            text: `SELECT ticket.ticket_create_by as "userId", token.token_value as token FROM ticket LEFT JOIN token ON token.token_user = ticket.ticket_create_by WHERE ticket.ticket_id = $1`,
+            values: [ticketId]
+        }
+
+        const result = await this._pool.query(query)
+
+        return result.rows
+    }
+
+    async getCommentUserToken(ticketId, userId) {
+        const query = {
+            text: `SELECT u.user_id as "userId", t.token_value as token, users.user_role as "userRole" FROM (SELECT ticket_create_by AS user_id FROM ticket WHERE ticket_id = $1 UNION SELECT assignment_assigned_to AS user_id FROM assignment WHERE assignment_ticket = $1) u LEFT JOIN token t ON u.user_id = t.token_user JOIN users ON u.user_id = users.user_id WHERE u.user_id != $2`,
+            values: [ticketId, userId]
+        }
+
+        const result = await this._pool.query(query)
+
+        return result.rows
+    }
+
 }
 
 module.exports = TokenService

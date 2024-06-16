@@ -119,28 +119,17 @@ class TicketService {
     }
 
     async verifyTechAccess(ticketId, userId) {
-        let query
-        let result
-        query = {
-            text: 'SELECT ticket_id FROM ticket WHERE ticket_id = $1',
-            values: [ticketId]
-        }
-
-        result = await this._pool.query(query)
-        if(!result.rows.length) {
-            throw new NotFoundError("Ticket tidak ditemukan")
-        }
-
-        query = {
+        const query = {
             text: 'SELECT ticket_id FROM ticket JOIN assignment ON ticket.ticket_id = assignment.assignment_ticket WHERE ticket.ticket_id = $1 AND assignment.assignment_assigned_to = $2',
             values: [ticketId, userId]
         }
 
-        result = await this._pool.query(query)
-        if(!result.rows.length) {
+        const result = await this._pool.query(query)
+        if(!result.rowCount) {
             throw new AuthorizationError("anda tidak berhak mengakses resource ini")
         }
     }
+
     async updateTicket(ticketId) {
         const query = {
             text: 'UPDATE ticket SET ticket_update_at = NOW() WHERE ticket_id = $1 RETURNING ticket_id',
@@ -149,7 +138,7 @@ class TicketService {
 
         const result = await this._pool.query(query)
         
-        if(!result.rows.length) {
+        if(!result.rowCount) {
             throw new NotFoundError("Ticket tidak ditemukan")
         }
     }
@@ -162,7 +151,7 @@ class TicketService {
 
         const result = await this._pool.query(query)
         
-        if(!result.rows.length) {
+        if(!result.rowCount) {
             throw new NotFoundError("Ticket tidak ditemukan")
         }
     }
@@ -175,7 +164,7 @@ class TicketService {
 
         const result = await this._pool.query(query)
         
-        if(!result.rows.length) {
+        if(!result.rowCount) {
             throw new NotFoundError("Ticket tidak ditemukan")
         }
     }
@@ -189,6 +178,18 @@ class TicketService {
         console.log(result)
         
         return result.rows
+    }
+
+    async verifyUserAccess(ticketId, userId) {
+        const query = {
+            text: 'SELECT ticket_id FROM ticket WHERE ticket_id = $1 AND ticket_create_by = $2',
+            values: [ticketId, userId]
+        }
+
+        const result = await this._pool.query(query)
+        if(!result.rowCount) {
+            throw new AuthorizationError("anda tidak berhak mengakses resource ini")
+        }
     }
 }
 
