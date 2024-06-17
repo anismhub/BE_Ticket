@@ -204,7 +204,7 @@ class UsersHandler {
 
             const { deviceId } = req.body
 
-            await this._tokenManager.deleteToken(req.userId, deviceId)
+            await this._tokenService.removeToken(req.userId, deviceId)
             const response = {
                 error: false,
                 status: 200,
