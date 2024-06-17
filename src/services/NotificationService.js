@@ -6,6 +6,17 @@ class NotificationService {
         this._pool = new Pool()
     }
 
+    async getNotification(userId) {
+        const query = {
+            text: `SELECT notification_id as "notificationId", notification_ticket as "notificationTicket", notification_content as "notificationContent", notification_create_at as "notificationCreateAt" FROM notification WHERE notification_recipient = $1 ORDER BY notification_create_at DESC`,
+            values: [userId]
+        }
+
+        const result = await this._pool.query(query)
+
+        return result.rows
+    }
+
     async sendNotification(notificationData) {
         try {
             await firebase.messaging().send(notificationData)

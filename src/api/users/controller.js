@@ -2,9 +2,10 @@
 
 
 class UsersHandler {
-    constructor(service, tokenService, validator, tokenManager) {
+    constructor(service, tokenService, notificationService, validator, tokenManager) {
         this._service = service
         this._tokenService = tokenService
+        this._notificationService = notificationService
         this._validator = validator
         this._tokenManager = tokenManager
 
@@ -19,6 +20,7 @@ class UsersHandler {
         this.deleteUser = this.deleteUser.bind(this)
         this.postToken = this.postToken.bind(this)
         this.deleteToken = this.deleteToken.bind(this)
+        this.getNotification = this.getNotification.bind(this)
     }
 
     async getUsers(req, res, next) {
@@ -39,13 +41,13 @@ class UsersHandler {
     async getUserById(req, res, next) {
         try {
             const result = await this._service.getUserById(req.params.id)
-                const response = {
-                    error: false,
-                    status: 200,
-                    message: 'Success',
-                    data: result
-                }
-                res.status(200).send(response)
+            const response = {
+                error: false,
+                status: 200,
+                message: 'Success',
+                data: result
+            }
+            res.status(200).send(response)
         } catch (error) {
             next(error)
         }
@@ -114,7 +116,7 @@ class UsersHandler {
     async postAddUser(req, res, next) {
         try {
             this._validator.validateAddUserPayload(req.body)
-            
+
             const result = await this._service.addUser(req.body)
 
             const response = {
@@ -131,9 +133,9 @@ class UsersHandler {
     async postEditUser(req, res, next) {
         try {
             this._validator.validateEditUserPayload(req.body)
-    
+
             const result = await this._service.editUser(req.params.id, req.body)
-    
+
             const response = {
                 error: false,
                 status: 201,
@@ -181,7 +183,7 @@ class UsersHandler {
         try {
             await this._validator.validatePostTokenPayload(req.body)
 
-            const { deviceId, token} = req.body
+            const { deviceId, token } = req.body
 
             await this._tokenService.saveToken(req.userId, deviceId, token)
 
@@ -207,6 +209,21 @@ class UsersHandler {
                 error: false,
                 status: 200,
                 message: "Success"
+            }
+            res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getNotification(req, res, next) {
+        try {
+            const result = await this._notificationService.getNotification(req.userId)
+            const response = {
+                error: false,
+                status: 200,
+                message: "Success",
+                data: result
             }
             res.status(200).json(response)
         } catch (error) {

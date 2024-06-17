@@ -6,13 +6,13 @@ class TokenService {
     }
 
     async saveToken(userId, deviceId, token) {
-        let query
+        let query, result
         query = {
-            text: 'UPDATE INTO token set token_value = $1 WHERE token_user = $2 AND token_device = $3 RETURNING token_user',
+            text: 'UPDATE token set token_value = $1 WHERE token_user = $2 AND token_device = $3 RETURNING token_user',
             values: [token, userId, deviceId]
         }
         result = await this._pool.query(query)
-        if(!result.rows[0].token_user) {
+        if(!result.rowCount) {
             query = {
                 text: 'INSERT INTO token VALUES ($1, $2, $3) RETURNING token_user',
                 values: [userId, deviceId, token]
@@ -28,7 +28,7 @@ class TokenService {
             text: 'DELETE FROM token WHERE token_user = $1 AND token_device = $2 RETURNING token_user',
             values: [user_id, deviceId]
         }
-        
+
         await this._pool.query(query)
     }
 

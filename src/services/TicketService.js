@@ -25,6 +25,8 @@ class TicketService {
             query.values.push(`%${searchQuery.trim()}%`)
         }
 
+        query.text += " ORDER BY ticket_create_at DESC"
+
         const result = await this._pool.query(query)
         return result.rows
     }
@@ -46,6 +48,8 @@ class TicketService {
             query.values.push(`%${searchQuery.trim()}%`)
         }
 
+        query.text += " ORDER BY ticket_create_at DESC"
+
         const result = await this._pool.query(query)
         return result.rows
     }
@@ -66,6 +70,8 @@ class TicketService {
             query.text += ` AND (ticket_id::text ILIKE $${nextParam} OR ticket_subject ILIKE $${nextParam} OR ticket_description ILIKE $${nextParam})`
             query.values.push(`%${searchQuery.trim()}%`)
         }
+
+        query.text += " ORDER BY ticket_create_at DESC"
 
         const result = await this._pool.query(query)
         return result.rows

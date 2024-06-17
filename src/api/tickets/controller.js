@@ -82,9 +82,12 @@ class TicketHandler {
 
             res.status(201).json(response)
 
+            const sentNotifications = new Map()
+
             this._tokenService.getAdminsToken()
             .then(tokens => {
                 const notificationPromises = tokens.map(token => {
+                    const promises = []
                     const notificationData = {
                         token: token.token,
                         notification: {
@@ -97,8 +100,13 @@ class TicketHandler {
                             ticketId: `${result}`
                         }
                     }
+
+                    const notificationKey = `${token.userId}-${result}`
                     
-                    const promises = [this._notificationService.saveNotification(token.userId, result, notificationData.data.body)]
+                    if (!sentNotifications.has(notificationKey)) {
+                        promises.push(this._notificationService.saveNotification(token.userId, result, notificationData.data.body))
+                        sentNotifications.set(notificationKey, true)
+                    }
 
                     if (token.token) {
                         promises.push(this._notificationService.sendNotification(notificationData))
@@ -133,9 +141,12 @@ class TicketHandler {
             }
             res.status(201).json(response)
 
+            const sentNotifications = new Map()
+
             this._tokenService.getAssignedToken(req.params.id)
             .then(tokens => {
                 return Promise.all(tokens.map(token => {
+                    const promises = []
                     let notificationData = {
                         token: token.token,
                         notification: {
@@ -153,7 +164,13 @@ class TicketHandler {
                         notificationData.data.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
                     }
 
-                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
+                    const notificationKey = `${token.userId}-${req.params.id}`
+
+                    if (!sentNotifications.has(notificationKey)) {
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        sentNotifications.set(notificationKey,true)
+                    }
+
 
                     if (token.token) {
                         promises.push(this._notificationService.sendNotification(notificationData))
@@ -183,9 +200,12 @@ class TicketHandler {
             }
             res.status(201).json(response)
 
+            const sentNotifications = new Map()
+
             this._tokenService.getCommentUserToken(req.params.id, req.userId)
             .then(tokens => {
                 return Promise.all(tokens.map(token => {
+                    const promises = []
                     const notificationData = {
                         token: token.token,
                         notification: {
@@ -199,7 +219,12 @@ class TicketHandler {
                         }
                     }
 
-                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
+                    const notificationKey = `${token.userId}-${req.params.id}`
+
+                    if (!sentNotifications.has(notificationKey)) {
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        sentNotifications.set(notificationKey,true)
+                    }
 
                     if (token.token) {
                         promises.push(this._notificationService.sendNotification(notificationData))
@@ -228,9 +253,12 @@ class TicketHandler {
             }
             res.status(201).json(response)
 
+            const sentNotifications = new Map()
+
             this._tokenService.getTicketUserToken(req.params.id)
             .then(tokens => {
                 return Promise.all(tokens.map(token => {
+                    const promises = []
                     const notificationData = {
                         token: token.token,
                         notification: {
@@ -244,7 +272,12 @@ class TicketHandler {
                         }
                     }
 
-                    const promises = [this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body)]
+                    const notificationKey = `${token.userId}-${req.params.id}`
+
+                    if (!sentNotifications.has(notificationKey)) {
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        sentNotifications.set(notificationKey,true)
+                    }
 
                     if (token.token) {
                         promises.push(this._notificationService.sendNotification(notificationData))
