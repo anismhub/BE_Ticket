@@ -23,6 +23,15 @@ class TokenService {
         return result.rows[0].token_user
     }
 
+    async removeToken(user_id, deviceId) {
+        const query = {
+            text: 'DELETE FROM token WHERE token_user = $1 AND token_device = $2 RETURNING token_user',
+            values: [user_id, deviceId]
+        }
+        
+        await this._pool.query(query)
+    }
+
     async getAdminsToken() {
         const query = `SELECT users.user_id as "userId", token.token_value as token FROM users LEFT JOIN token ON users.user_id = token.token_user WHERE users.user_role = 'Administrator' and users.user_status = TRUE`
         const result = await this._pool.query(query)

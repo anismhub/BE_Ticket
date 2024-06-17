@@ -18,6 +18,7 @@ class UsersHandler {
         this.postChangePassword = this.postChangePassword.bind(this)
         this.deleteUser = this.deleteUser.bind(this)
         this.postToken = this.postToken.bind(this)
+        this.deleteToken = this.deleteToken.bind(this)
     }
 
     async getUsers(req, res, next) {
@@ -190,6 +191,24 @@ class UsersHandler {
                 message: "Success"
             }
             res.status(201).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deleteToken(req, res, next) {
+        try {
+            await this._validator.validateDeleteTokenPayload(req.body)
+
+            const { deviceId } = req.body
+
+            await this._tokenManager.deleteToken(req.userId, deviceId)
+            const response = {
+                error: false,
+                status: 200,
+                message: "Success"
+            }
+            res.status(200).json(response)
         } catch (error) {
             next(error)
         }

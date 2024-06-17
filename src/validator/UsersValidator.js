@@ -27,6 +27,9 @@ const UserSchema = {
     postTokenPayloadSchema: Joi.object({
         deviceId: Joi.string().required(),
         token: Joi.string().required()
+    }),
+    deleteTokenPayloadSchema: Joi.object({
+        deviceId: Joi.string().required()
     })
 }
 
@@ -61,6 +64,13 @@ const UserValidator = {
     },
     validatePostTokenPayload: payload => {
         const validationResult = UserSchema.postTokenPayloadSchema.validate(payload)
+        
+        if (validationResult.error) {
+            throw new InvariantError(validationResult.error.message)
+        }
+    },
+    validateDeleteTokenPayload: payload => {
+        const validationResult = UserSchema.deleteTokenPayloadSchema.validate(payload)
         
         if (validationResult.error) {
             throw new InvariantError(validationResult.error.message)
