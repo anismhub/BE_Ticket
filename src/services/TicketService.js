@@ -190,9 +190,7 @@ class TicketService {
             text : "SELECT * FROM ticket WHERE ticket_create_at::date BETWEEN $1 AND $2",
             values: [startDate, endDate]
         }
-        const result = await this._pool.query(query)
-        console.log(result)
-        
+        const result = await this._pool.query(query)        
         return result.rows
     }
 
