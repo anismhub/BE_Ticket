@@ -33,7 +33,7 @@ class TicketService {
 
     async getProgressTickets(userRole, userId, searchQuery) {
         const query = {
-            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket WHERE ticket_status = $1',
+            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket',
             values: ['On Progress']
         }
 
@@ -61,7 +61,7 @@ class TicketService {
 
     async getClosedTickets(userRole, userId, searchQuery) {
         const query = {
-            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket WHERE ticket_status = $1',
+            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket',
             values: ['Closed']
         }
 
