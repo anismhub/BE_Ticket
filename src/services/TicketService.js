@@ -37,9 +37,14 @@ class TicketService {
             values: ['On Progress']
         }
 
-        if (userRole !== 'Administrator') {
-            query.text += ' AND ticket_create_by = $2'
-            query.values.push(userId)
+        if (userRole === 'Karyawan') {
+            query.text += ' WHERE ticket.ticket_status = $1 AND ticket.ticket_create_by = $2';
+            query.values.push(userId);
+        } else if (userRole === 'Teknisi') {
+            query.text += ' JOIN assignment ON ticket.ticket_id = assignment.assignment_ticket WHERE ticket.ticket_status = $1 AND assignment.assignment_assigned_to = $2';
+            query.values.push(userId);
+        } else {
+            query.text += ' WHERE ticket.ticket_status = $1';
         }
 
         if(searchQuery) {
@@ -60,9 +65,14 @@ class TicketService {
             values: ['Closed']
         }
 
-        if (userRole !== 'Administrator') {
-            query.text += ' AND ticket_create_by = $2'
-            query.values.push(userId)
+        if (userRole === 'Karyawan') {
+            query.text += ' WHERE ticket.ticket_status = $1 AND ticket.ticket_create_by = $2';
+            query.values.push(userId);
+        } else if (userRole === 'Teknisi') {
+            query.text += ' JOIN assignment ON ticket.ticket_id = assignment.assignment_ticket WHERE ticket.ticket_status = $1 AND assignment.assignment_assigned_to = $2';
+            query.values.push(userId);
+        } else {
+            query.text += ' WHERE ticket.ticket_status = $1';
         }
 
         if(searchQuery) {
