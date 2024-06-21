@@ -13,6 +13,10 @@ exports.up = pgm => {
             type: 'TEXT',
             notNull: true
         },
+        comment_image: {
+            type: 'TEXT',
+            notNull: false
+        },
         comment_ticket: {
             type: 'INTEGER',
             notNull: true
