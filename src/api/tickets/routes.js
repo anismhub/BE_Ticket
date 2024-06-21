@@ -19,7 +19,7 @@ const router = require('express').Router()
 
 router.get('/Tickets', verifyToken, ticketHandler.getTickets)
 
-router.get('/Tickets/Export', verifyAdminToken, ticketHandler.exportReport)
+router.get('/Tickets/Export', verifyAdminOrTechToken, ticketHandler.exportReport)
 
 router.get('/Tickets/:id', verifyToken, ticketHandler.getTicketById)
 
