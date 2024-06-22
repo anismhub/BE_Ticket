@@ -92,11 +92,11 @@ class TicketHandler {
                         token: token.token,
                         notification: {
                             title: "Ticket Baru",
-                            body: `Tiket #${req.params.id} telah dibuat oleh ${req.userFullName}`
+                            body: `Tiket #${result} telah dibuat oleh ${req.userFullName}`
                         },
                         data: {
                             title: "Ticket Baru",
-                            body: `Tiket #${req.params.id} telah dibuat oleh ${req.userFullName}`,
+                            body: `Tiket #${result} telah dibuat oleh ${req.userFullName}`,
                             ticketId: `${result}`
                         }
                     }
