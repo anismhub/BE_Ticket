@@ -20,7 +20,7 @@ app.use(resourcesRoutes)
 app.use(UserRoutes)
 app.use(TicketRoutes)
 
-app.use('/uploads', verifyToken, express.static(path.join(__dirname, '..', 'uploads')))
+app.use('/public/uploads', verifyToken, express.static(path.join(__dirname, '..', 'uploads')))
 
 app.get('*', (_, res) => {
     res.send("Backend Application for Ticket System")

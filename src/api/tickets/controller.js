@@ -2,6 +2,8 @@ const InvariantError = require('../../exceptions/InvariantError')
 const ExcelJs = require('exceljs')
 const fs = require('fs')
 const path = require('path')
+const multer = require('multer')
+const cryptoJS = require('crypto-js')
 
 class TicketHandler {
     constructor(ticketService, assignService, commentService, resolutionService, tokenService, notificationService, validator) {
@@ -21,6 +23,28 @@ class TicketHandler {
         this.postCloseTicket = this.postCloseTicket.bind(this)
         this.exportReport = this.exportReport.bind(this)
     }
+
+    upload = multer({
+        storage: multer.diskStorage({
+            destination: path.join(__dirname, '..', '..', '..', 'uploads'),
+            filename: (_req, file, cb) => {
+                const hash = cryptoJS.MD5(Date.now().toString()).toString()
+                cb(null, hash + path.extname(file.originalname))
+            }
+        }),
+        limits: { fileSize: 1000000 },
+        fileFilter:  (_req, file,  cb) => {
+            const fileTypes = /jpeg|jpg|png|gif/
+            const extName = fileTypes.test(path.extname(file.originalname).toLowerCase())
+            const mimeTye = fileTypes.test(file.mimetype)
+
+            if (mimeTye && extName) {
+                return cb(null, true);
+              } else {
+                cb('Error: Invalid file type!');
+              }
+        }
+    }).single('file')
 
     async getTickets(req, res, next) {
         try {
@@ -190,8 +214,13 @@ class TicketHandler {
             if (req.userRole == 'Teknisi') {
                 await this._ticketService.verifyTechAccess(req.params.id, req.userId)
             }
+
+            let fileName = null
+            if (req.file) {
+                fileName = req.file.filename
+            }
             await this._ticketService.updateTicket(req.params.id)
-            await this._commentService.postComment(req.params.id, req.userId, req.body.content)
+            await this._commentService.postComment(req.params.id, req.userId, req.body.content, fileName)
 
             const response = {
                 error: false,

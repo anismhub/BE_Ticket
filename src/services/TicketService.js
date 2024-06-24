@@ -1,3 +1,4 @@
+require('dotenv').config()
 const { Pool } = require('pg')
 const AuthorizationError = require('../exceptions/AuthorizationError')
 const InvariantError = require('../exceptions/InvariantError')
@@ -106,11 +107,16 @@ class TicketService {
         result = await this._pool.query(query)
         data.ticketAssignedTo = (result.rows[0] === undefined) ? null : result.rows[0].user_name
         query = {
-            text: 'SELECT users.user_name as "commentName", comment.comment_content as "commentContent", comment.comment_create_at as "commentTime", users.user_role as "commentUserRole" FROM comment JOIN users ON users.user_id = comment.comment_create_by WHERE comment.comment_ticket = $1',
+            text: 'SELECT users.user_name as "commentName", comment.comment_content as "commentContent", comment.comment_image as "commentImage", comment.comment_create_at as "commentTime", users.user_role as "commentUserRole" FROM comment JOIN users ON users.user_id = comment.comment_create_by WHERE comment.comment_ticket = $1',
             values: [ticketId]
         }
         result = await this._pool.query(query)
-        data.comments = result.rows
+        data.comments = result.rows.map(item => {
+            return {
+                ...item,
+                commentImage: item.commentImage ? `http://${process.env.HOST}:${process.env.PORT}/public/uploads/${item.commentImage}` : item.commentImage
+            }
+        })
         query = {
             text: 'SELECT users.user_name as "resolutionName", resolution.resolution_content as "resolutionContent", resolution.resolution_resolve_at as "resolutionTime" FROM resolution JOIN users ON users.user_id = resolution.resolution_resolve_by WHERE resolution.resolution_ticket = $1',
             values: [ticketId]
