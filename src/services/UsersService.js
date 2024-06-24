@@ -170,6 +170,25 @@ class UsersService {
             throw new AuthenticationError("Kredensial yang Anda berikan salah")
         }
     }
+
+    async checkCurrentPassword(userId, currentPassword) {
+        const query = {
+            text:  `SELECT user_password as "hashedPassword" FROM users WHERE user_id = $1`,
+            values: [userId]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rowCount) {
+            throw new NotFoundError("User tidak ditemukan")
+        }
+
+        const match = await bcrypt.compare(currentPassword, result.rows[0].hashedPassword)
+
+        if (!match) {
+            throw new AuthenticationError("Kredensial yang Anda berikan salah")
+        }
+    }
 }
 
 module.exports = UsersService

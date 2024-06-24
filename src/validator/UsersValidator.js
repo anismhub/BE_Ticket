@@ -22,7 +22,8 @@ const UserSchema = {
         phoneNumber: Joi.string().required()
     }),
     changePasswordPayloadSchema: Joi.object({
-        password: Joi.string().required()
+        currentPassword: Joi.string().required(),
+        newPassword: Joi.string().required()
     }),
     postTokenPayloadSchema: Joi.object({
         deviceId: Joi.string().required(),

@@ -151,7 +151,11 @@ class UsersHandler {
         try {
             this._validator.validateChangePasswordPayload(req.body)
 
-            const result = await this._service.changeUserPassword(req.userId, req.body.password)
+            const { currentPassword, newPassword } = req.body
+
+            await this._service.checkCurrentPassword(req.userId, currentPassword)
+
+            const result = await this._service.changeUserPassword(req.userId, newPassword)
 
             const response = {
                 error: false,
