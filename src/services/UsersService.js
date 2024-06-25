@@ -186,7 +186,7 @@ class UsersService {
         const match = await bcrypt.compare(currentPassword, result.rows[0].hashedPassword)
 
         if (!match) {
-            throw new AuthenticationError("Kredensial yang Anda berikan salah")
+            throw new AuthenticationError("Password sekarang tidak sesuai")
         }
     }
 }
