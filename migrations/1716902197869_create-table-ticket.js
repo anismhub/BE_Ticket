@@ -55,9 +55,9 @@ exports.up = pgm => {
     pgm.addConstraint('ticket', 'fk_ticket.ticket_create_by_users.user_id', 'FOREIGN KEY(ticket_create_by) REFERENCES users(user_id) ON UPDATE CASCADE ON DELETE CASCADE')
     pgm.addConstraint('ticket', 'fk_ticket.ticket_area_area.area_id', 'FOREIGN KEY(ticket_area) REFERENCES area(area_id) ON UPDATE CASCADE ON DELETE CASCADE')
 
-    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket pertama', 'deskripsi tiket pertama', 'On Progress', 'Tinggi', 1, 1, 3)")
-    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket kedua', 'deskripsi tiket kedua', 'Open', 'Sedang', 1, 1, 3)")
-    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket ketiga', 'deskripsi tiket ketiga', 'Closed', 'Rendah', 1, 1, 3)")
+    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket pertama', 'deskripsi tiket pertama', 'On Progress', 'Tinggi', 1, 1, 7)")
+    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket kedua', 'deskripsi tiket kedua', 'Open', 'Sedang', 1, 1, 5)")
+    pgm.sql("INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ('Subjek tiket ketiga', 'deskripsi tiket ketiga', 'Closed', 'Rendah', 1, 1, 6)")
 }
 
 
