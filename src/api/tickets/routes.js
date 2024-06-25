@@ -27,7 +27,7 @@ router.post('/Tickets', verifyClientToken, ticketHandler.postAddTicket)
 
 router.post('/Tickets/:id/Assign', verifyAdminToken, ticketHandler.postAssignTicket)
 
-router.post('/Tickets/:id/Comments', verifyAdminOrTechToken, ticketHandler.postAddCommentTicket)
+router.post('/Tickets/:id/Comments', verifyAdminOrTechToken, ticketHandler.upload, ticketHandler.postAddCommentTicket)
 
 router.post('/Tickets/:id/Close', verifyAdminOrTechToken,ticketHandler.postCloseTicket)
 
