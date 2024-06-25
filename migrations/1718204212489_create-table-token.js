@@ -22,6 +22,6 @@ exports.up = pgm => {
 }
 
 exports.down = pgm => {
-    pgm.dropIndex('token', ['token_user', 'token_device'])
+    // pgm.dropIndex('token', ['token_user', 'token_device'])
     pgm.dropTable('token')
 }
