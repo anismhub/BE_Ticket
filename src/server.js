@@ -9,7 +9,6 @@ const ErrorHandler = require('./middleware/ErrorHandler')
 const UserRoutes = require('./api/users/routes')
 const TicketRoutes = require('./api/tickets/routes')
 const resourcesRoutes = require('./api/resources/routes')
-const { verifyToken } = require('./middleware/AuthMiddleware')
 
 initializeFirebaseSDK()
 
@@ -20,7 +19,7 @@ app.use(resourcesRoutes)
 app.use(UserRoutes)
 app.use(TicketRoutes)
 
-app.use('/public/uploads', verifyToken, express.static(path.join(__dirname, '..', 'uploads')))
+app.use('/public/uploads', express.static(path.join(__dirname, '..', 'uploads')))
 
 app.get('*', (_, res) => {
     res.send("Backend Application for Ticket System")
