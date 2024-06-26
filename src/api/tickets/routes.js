@@ -23,7 +23,7 @@ router.get('/Tickets/Export', verifyAdminOrTechToken, ticketHandler.exportReport
 
 router.get('/Tickets/:id', verifyToken, ticketHandler.getTicketById)
 
-router.post('/Tickets', verifyClientToken, ticketHandler.postAddTicket)
+router.post('/Tickets', verifyToken, ticketHandler.postAddTicket)
 
 router.post('/Tickets/:id/Assign', verifyAdminToken, ticketHandler.postAssignTicket)
 
