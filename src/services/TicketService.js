@@ -122,12 +122,17 @@ class TicketService {
     }
 
     async addTicket(userId, { ticketSubject, ticketDescription, ticketPriority, ticketArea, ticketCategory }) {
-        const query = {
-            text: 'INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING ticket_id',
-            values: [ticketSubject, ticketDescription, 'Open', ticketPriority, ticketArea, ticketCategory, userId]
+        let query = {
+            text: 'SELECT user_department FROM users WHERE user_id = $1',
+            values: [userId]
+        }
+        let result = await this._pool.query(query)
+        query = {
+            text: 'INSERT INTO ticket (ticket_subject, ticket_description, ticket_status, ticket_priority, ticket_area, ticket_category, ticket_create_by, ticket_user_department) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING ticket_id',
+            values: [ticketSubject, ticketDescription, 'Open', ticketPriority, ticketArea, ticketCategory, userId, result.rows[0].user_department]
         }
 
-        const result = await this._pool.query(query)
+        result = await this._pool.query(query)
         if(!result.rows[0].ticket_id) {
             throw new InvariantError('Ticket gagal ditambahkan')
         }
