@@ -183,7 +183,7 @@ class TicketHandler {
                             ticketId: `${req.params.id}`
                         }
                     }
-                    if(token.userRole == 'Karyawan') {
+                    if(token.userRole != 'Teknisi') {
                         notificationData.notification.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
                         notificationData.data.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
                     }
