@@ -11,7 +11,7 @@ class TicketService {
 
     async getOpenTickets(userRole, userId, searchQuery) {
         const query = {
-            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket WHERE ticket_status = $1',
+            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt", area_code as "ticketAreaCode", category_code as "ticketCategoryCode" FROM ticket JOIN area on ticket.ticket_area = area.area_id JOIN category on ticket.ticket_category = category.category_id WHERE ticket_status = $1',
             values: ['Open']
         }
 
@@ -34,7 +34,7 @@ class TicketService {
 
     async getProgressTickets(userRole, userId, searchQuery) {
         const query = {
-            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket',
+            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt", area_code as "ticketAreaCode", category_code as "ticketCategoryCode" FROM ticket JOIN area on ticket.ticket_area = area.area_id JOIN category on ticket.ticket_category = category.category_id',
             values: ['On Progress']
         }
 
@@ -62,7 +62,7 @@ class TicketService {
 
     async getClosedTickets(userRole, userId, searchQuery) {
         const query = {
-            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt" FROM ticket',
+            text: 'SELECT ticket_id as "ticketId", ticket_subject as "ticketSubject", ticket_priority as "ticketPriority", ticket_status as "ticketStatus", ticket_create_at as "ticketCreateAt", area_code as "ticketAreaCode", category_code as "ticketCategoryCode" FROM ticket JOIN area on ticket.ticket_area = area.area_id JOIN category on ticket.ticket_category = category.category_id',
             values: ['Closed']
         }
 
@@ -91,7 +91,7 @@ class TicketService {
     async getTicketById(ticketId) {
         let query, result, data
         query = {
-            text: 'SELECT ticket.ticket_id AS "ticketId", ticket.ticket_subject AS "ticketSubject", ticket.ticket_description AS "ticketDescription", ticket.ticket_status AS "ticketStatus", ticket.ticket_priority AS "ticketPriority", area.area_name AS "ticketArea", category.category_name AS "ticketCategory", users.user_name AS "ticketCreatedBy", department.department_name AS "ticketDepartmentBy", ticket.ticket_create_at AS "ticketCreatedAt", ticket.ticket_update_at AS "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN department ON department.department_id = ticket.ticket_user_department JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket.ticket_id = $1;',
+            text: 'SELECT ticket.ticket_id AS "ticketId", ticket.ticket_subject AS "ticketSubject", ticket.ticket_description AS "ticketDescription", ticket.ticket_status AS "ticketStatus", ticket.ticket_priority AS "ticketPriority", area.area_name AS "ticketArea", area.area_code AS "ticketAreaCode", category.category_name AS "ticketCategory", category.category_code AS "ticketCategoryCode", users.user_name AS "ticketCreatedBy", department.department_name AS "ticketDepartmentBy", ticket.ticket_create_at AS "ticketCreatedAt", ticket.ticket_update_at AS "ticketUpdatedAt" FROM ticket JOIN users ON users.user_id = ticket.ticket_create_by JOIN department ON department.department_id = ticket.ticket_user_department JOIN area ON area.area_id = ticket.ticket_area JOIN category ON category.category_id = ticket.ticket_category WHERE ticket.ticket_id = $1;',
             values: [ticketId]
         }
 

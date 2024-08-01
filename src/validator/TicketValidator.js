@@ -11,13 +11,16 @@ const TicketSchema = {
         ticketDescription: Joi.string().required(),
         ticketPriority: Joi.string().required().valid('Rendah', 'Sedang', 'Tinggi'),
         ticketArea: Joi.number().required(),
-        ticketCategory: Joi.number().required()
+        ticketCategory: Joi.number().required(),
+        ticketCode: Joi.string().required()
     }),
     putAssignPayloadSchema: Joi.object({
-        userId: Joi.number().required()
+        userId: Joi.number().required(),
+        ticketCode: Joi.string().required()
     }),
     postAddCommentPayloadSchema: Joi.object({
-        content: Joi.string().required()
+        content: Joi.string().required(),
+        ticketCode: Joi.string().required()
     }),
     getExportPayloadSchema: Joi.object({
         startDate: Joi.date().required(),

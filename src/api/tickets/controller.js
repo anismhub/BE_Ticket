@@ -98,10 +98,12 @@ class TicketHandler {
 
             const result = await this._ticketService.addTicket(req.userId, req.body)
 
+            const { ticketCode } = req.body
+
             const response = {
                 error: false,
                 status: 201,
-                message: `Ticket telah ditambahkan dengan id #${result}`
+                message: `Ticket telah ditambahkan dengan id #${ticketCode}-${result}`
             }
 
             res.status(201).json(response)
@@ -116,11 +118,11 @@ class TicketHandler {
                         token: token.token,
                         notification: {
                             title: "Ticket Baru",
-                            body: `Tiket #${result} telah dibuat oleh ${req.userFullName}`
+                            body: `Tiket #${ticketCode}-${result} telah dibuat oleh ${req.userFullName}`
                         },
                         data: {
                             title: "Ticket Baru",
-                            body: `Tiket #${result} telah dibuat oleh ${req.userFullName}`,
+                            body: `Tiket #${ticketCode}-${result} telah dibuat oleh ${req.userFullName}`,
                             ticketId: `${result}`
                         }
                     }
@@ -128,7 +130,7 @@ class TicketHandler {
                     const notificationKey = `${token.userId}-${result}`
                     
                     if (!sentNotifications.has(notificationKey)) {
-                        promises.push(this._notificationService.saveNotification(token.userId, result, notificationData.data.body))
+                        promises.push(this._notificationService.saveNotification(token.userId, result, notificationData.data.body, ticketCode))
                         sentNotifications.set(notificationKey, true)
                     }
 
@@ -158,10 +160,12 @@ class TicketHandler {
             await this._ticketService.updateTicketToOnProgress(req.params.id)
             await this._assignService.addAssignment(req.params.id, req.body.userId)
 
+            const { ticketCode } = req.body
+
             const response = {
                 error: false,
                 status: 201,
-                message: `berhasil menugaskan Teknisi#${req.body.userId} ke Ticket#${req.params.id}`
+                message: `berhasil menugaskan Teknisi#${req.body.userId} ke Ticket#${ticketCode}-${req.params.id}`
             }
             res.status(201).json(response)
 
@@ -175,23 +179,23 @@ class TicketHandler {
                         token: token.token,
                         notification: {
                             title: "Update Ticket",
-                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`
+                            body: `Anda Baru saja ditugaskan pada ticket#${ticketCode}-${req.params.id}`
                         },
                         data: {
                             title: "Update Ticket",
-                            body: `Anda Baru saja ditugaskan pada ticket#${req.params.id}`,
+                            body: `Anda Baru saja ditugaskan pada ticket#${ticketCode}-${req.params.id}`,
                             ticketId: `${req.params.id}`
                         }
                     }
                     if(token.userRole != 'Teknisi') {
-                        notificationData.notification.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
-                        notificationData.data.body = `Ticket#${req.params.id} anda telah ditugaskan pada teknisi`
+                        notificationData.notification.body = `Ticket#${ticketCode}-${req.params.id} anda telah ditugaskan pada teknisi`
+                        notificationData.data.body = `Ticket#${ticketCode}-${req.params.id} anda telah ditugaskan pada teknisi`
                     }
 
                     const notificationKey = `${token.userId}-${req.params.id}`
 
                     if (!sentNotifications.has(notificationKey)) {
-                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body, ticketCode))
                         sentNotifications.set(notificationKey,true)
                     }
 
@@ -214,6 +218,8 @@ class TicketHandler {
             if (req.userRole == 'Teknisi') {
                 await this._ticketService.verifyTechAccess(req.params.id, req.userId)
             }
+
+            const { ticketCode } = req.body
 
             let fileName = null
             if (req.file) {
@@ -239,11 +245,11 @@ class TicketHandler {
                         token: token.token,
                         notification: {
                             title: "Update Ticket",
-                            body: `Ada Komen baru pada Ticket#${req.params.id}`
+                            body: `Ada Komen baru pada Ticket#${ticketCode}-${req.params.id}`
                         },
                         data: {
                             title: "Update Ticket",
-                            body: `Ada Komen baru pada Ticket#${req.params.id}`,
+                            body: `Ada Komen baru pada Ticket#${ticketCode}-${req.params.id}`,
                             ticketId: `${req.params.id}`
                         }
                     }
@@ -251,7 +257,7 @@ class TicketHandler {
                     const notificationKey = `${token.userId}-${req.params.id}`
 
                     if (!sentNotifications.has(notificationKey)) {
-                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body, ticketCode))
                         sentNotifications.set(notificationKey,true)
                     }
 
@@ -273,6 +279,7 @@ class TicketHandler {
             if (req.userRole == 'Teknisi') {
                 await this._ticketService.verifyTechAccess(req.params.id, req.userId)
             }
+            const { ticketCode } = req.body
             await this._ticketService.closeTicket(req.params.id)
             await this._resolutionService.addResolution(req.params.id, req.userId, req.body.content)
             const response = {
@@ -292,11 +299,11 @@ class TicketHandler {
                         token: token.token,
                         notification: {
                             title: "Update Ticket",
-                            body: `Tiket#${req.params.id} telah ditutup`
+                            body: `Tiket#${ticketCode}-${req.params.id} telah ditutup`
                         },
                         data: {
                             title: "Update Ticket",
-                            body: `Tiket#${req.params.id} telah ditutup`,
+                            body: `Tiket#${ticketCode}-${req.params.id} telah ditutup`,
                             ticketId: `${req.params.id}`
                         }
                     }
@@ -304,7 +311,7 @@ class TicketHandler {
                     const notificationKey = `${token.userId}-${req.params.id}`
 
                     if (!sentNotifications.has(notificationKey)) {
-                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body))
+                        promises.push(this._notificationService.saveNotification(token.userId, req.params.id, notificationData.data.body, ticketCode))
                         sentNotifications.set(notificationKey,true)
                     }
 
