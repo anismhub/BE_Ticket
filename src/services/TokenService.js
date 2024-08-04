@@ -74,7 +74,7 @@ class TokenService {
 
     async getCloseToken(ticketId) {
         const query = {
-            text: `SELECT tu.user_id as "userId", t.token_value as token FROM (SELECT DISTINCT t.ticket_create_by AS user_id FROM ticket t WHERE t.ticket_id = $1 UNION SELECT DISTINCT a.assignment_assigned_to AS user_id FROM assignment a WHERE a.assignment_ticket = $1 UNION SELECT u.user_id FROM users u WHERE u.user_role = 'admin') tu LEFT JOIN token t ON tu.user_id = t.token_user`,
+            text: `SELECT tu.user_id as "userId", t.token_value as token FROM (SELECT DISTINCT t.ticket_create_by AS user_id FROM ticket t WHERE t.ticket_id = $1 UNION SELECT DISTINCT a.assignment_assigned_to AS user_id FROM assignment a WHERE a.assignment_ticket = $1 UNION SELECT u.user_id FROM users u WHERE u.user_role = 'Administrator') tu LEFT JOIN token t ON tu.user_id = t.token_user`,
             values: [ticketId]
         }
 
