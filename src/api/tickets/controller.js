@@ -275,13 +275,9 @@ class TicketHandler {
 
     async postCloseTicket(req, res, next) {
         try {
-            this._validator.validatePostAddCommentPayload(req.body)
-            if (req.userRole == 'Teknisi') {
-                await this._ticketService.verifyTechAccess(req.params.id, req.userId)
-            }
+            await this._ticketService.verifyUserAccess(req.params.id, req.userId)
             const { ticketCode } = req.body
             await this._ticketService.closeTicket(req.params.id)
-            await this._resolutionService.addResolution(req.params.id, req.userId, req.body.content)
             const response = {
                 error: false,
                 status: 201,
@@ -291,7 +287,7 @@ class TicketHandler {
 
             const sentNotifications = new Map()
 
-            this._tokenService.getTicketUserToken(req.params.id)
+            this._tokenService.getCloseToken(req.params.id)
             .then(tokens => {
                 return Promise.all(tokens.map(token => {
                     const promises = []
