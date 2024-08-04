@@ -112,12 +112,6 @@ class TicketService {
         }
         result = await this._pool.query(query)
         data.comments = result.rows
-        query = {
-            text: 'SELECT users.user_name as "resolutionName", resolution.resolution_content as "resolutionContent", resolution.resolution_resolve_at as "resolutionTime" FROM resolution JOIN users ON users.user_id = resolution.resolution_resolve_by WHERE resolution.resolution_ticket = $1',
-            values: [ticketId]
-        }
-        result = await this._pool.query(query)
-        data.resolution = result.rows
         return data
     }
 
