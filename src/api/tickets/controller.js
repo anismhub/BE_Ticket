@@ -389,7 +389,7 @@ class TicketHandler {
 
             const timestamp = Date.now()
 
-            if (data.valid > timestamp) {
+            if (timestamp > data.valid) {
                 throw new NotFoundError("Link kadaluarsa")
             }
 
