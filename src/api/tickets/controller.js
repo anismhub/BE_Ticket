@@ -4,6 +4,9 @@ const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
 const cryptoJS = require('crypto-js')
+const ClientError = require('../../exceptions/ClientError')
+const AuthorizationError = require('../../exceptions/AuthorizationError')
+const NotFoundError = require('../../exceptions/NotFoundError')
 
 class TicketHandler {
     constructor(ticketService, assignService, commentService, resolutionService, tokenService, notificationService, validator) {
@@ -22,6 +25,7 @@ class TicketHandler {
         this.postAddCommentTicket = this.postAddCommentTicket.bind(this)
         this.postCloseTicket = this.postCloseTicket.bind(this)
         this.exportReport = this.exportReport.bind(this)
+        this.downloadReport = this.downloadReport.bind(this)
     }
 
     upload = multer({
@@ -325,8 +329,70 @@ class TicketHandler {
 
     async exportReport(req, res, next) {
         try {
-            this._validator.validateGetExportPayload(req.query)
-            const result = await this._ticketService.exportReport(req.query.startDate, req.query.endDate)
+            this._validator.validateGetExportPayload(req.body)
+
+            const { startDate, endDate } = req.body
+
+            const result = await this._ticketService.exportReport(startDate, endDate)
+
+            const now = new Date();
+            const tenMinutesFromNow = new Date(now.getTime() + 10 * 60000);
+            const timestamp = tenMinutesFromNow.getTime();
+
+            const data = {
+                startDate: startDate,
+                endDate: endDate,
+                valid: timestamp,
+                userId: req.userId
+            }
+
+            const enc = cryptoJS.AES.encrypt(JSON.stringify(data), process.env.SECRET)
+            const host = req.get('host')
+            const protocol = req.protocol
+
+            const url = `${protocol}://${host}/Tickets/Export/${process.env.SALT}${enc}`
+
+            const response = {
+                error: false,
+                status: 200,
+                message: "Success",
+                data: {
+                    downloadUrl: url,
+                    content: result
+                }
+            }
+
+            res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async downloadReport(req, res, next) {
+        try {
+            if (!req.params.data) {
+                throw new ClientError("bad Request")
+            }
+            if (!req.params.data.startsWith(process.env.SALT)) {
+                throw new ClientError("bad Request")
+            }
+            const enc = req.params.data.slice(process.env.SALT.length)
+
+            const decryptedBytes = CryptoJS.AES.decrypt(enc, process.env.SECRET)
+            const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8)
+            const data = JSON.parse(decryptedData)
+
+            if (data.userId != req.userId) {
+                throw new AuthorizationError("Anda tidak berhak mengakses resource ini")
+            }
+
+            const timestamp = Date.now()
+
+            if (data.valid > timestamp) {
+                throw new NotFoundError("Link kadaluarsa")
+            }
+
+            const result = await this._ticketService.exportReport(data.startDate, data.endDate)
 
             res.setHeader('Content-disposition', 'attachment; filename=tickets.xlsx')
             res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -357,6 +423,41 @@ class TicketHandler {
             next(error)
         }
     }
+
+    // async exportReport(req, res, next) {
+    //     try {
+    //         this._validator.validateGetExportPayload(req.query)
+    //         const result = await this._ticketService.exportReport(req.query.startDate, req.query.endDate)
+
+    //         res.setHeader('Content-disposition', 'attachment; filename=tickets.xlsx')
+    //         res.setHeader('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+    //         const workbook = new ExcelJs.Workbook()
+    //         const worksheet = workbook.addWorksheet('Ticket')
+
+    //         worksheet.columns = Object.keys(result[0]).map(key => ({header: key, key: key}))
+
+    //         worksheet.addRows(result)
+
+    //         const filePath = path.join(__dirname, 'export.xlsx')
+
+    //         await workbook.xlsx.writeFile(filePath)
+
+    //         res.download(filePath, 'export.xlsx', err => {
+    //             if(err) {
+    //                 throw new InvariantError("Gagal export")
+    //             }
+
+    //             fs.unlink(filePath, unlinkErr => {
+    //                 if (unlinkErr) {
+    //                     throw new InvariantError("Gagal Export")
+    //                 }
+    //             })
+    //         })
+    //     } catch (error) {
+    //         next(error)
+    //     }
+    // }
 }
 
 module.exports = TicketHandler
