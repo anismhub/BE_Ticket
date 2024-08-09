@@ -347,9 +347,10 @@ class TicketHandler {
             }
 
             const enc = cryptoJS.AES.encrypt(JSON.stringify(data), process.env.SECRET)
+            const urlEncoded = encodeURIComponent(enc)
             const host = req.get('host')
 
-            const url = `https://${host}/Tickets/Export/${process.env.SALT}${enc}`
+            const url = `https://${host}/Tickets/Export/${process.env.SALT}${urlEncoded}`
 
             const response = {
                 error: false,
@@ -375,7 +376,8 @@ class TicketHandler {
             if (!req.params.data.startsWith(process.env.SALT)) {
                 throw new ClientError("bad Request")
             }
-            const enc = req.params.data.slice(process.env.SALT.length)
+            const urlDecode = decodeURIComponent(req.params.data)
+            const enc = urlDecode.slice(process.env.SALT.length)
 
             const decryptedBytes = CryptoJS.AES.decrypt(enc, process.env.SECRET)
             const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8)
