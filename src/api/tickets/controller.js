@@ -379,8 +379,8 @@ class TicketHandler {
             const urlDecode = decodeURIComponent(req.params.data)
             const enc = urlDecode.slice(process.env.SALT.length)
 
-            const decryptedBytes = CryptoJS.AES.decrypt(enc, process.env.SECRET)
-            const decryptedData = decryptedBytes.toString(CryptoJS.enc.Utf8)
+            const decryptedBytes = cryptoJS.AES.decrypt(enc, process.env.SECRET)
+            const decryptedData = decryptedBytes.toString(cryptoJS.enc.Utf8)
             const data = JSON.parse(decryptedData)
 
             if (data.userId != req.userId) {
