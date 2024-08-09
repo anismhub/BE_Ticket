@@ -187,7 +187,7 @@ class TicketService {
 
     async exportReport(startDate, endDate) {
         const query = {
-            text : "SELECT ticket.ticket_id, ticket.ticket_subject, ticket.ticket_description, ticket.ticket_status, ticket.ticket_priority, area.area_name as ticket_area, category.category_name as ticket_category, users.user_name as ticket_created_by, department.department_name as ticket_department_by, ticket.ticket_create_at, ticket.ticket_update_at FROM ticket JOIN area ON ticket.ticket_area = area.area_id JOIN category ON ticket.ticket_category = category.category_id JOIN users ON ticket.ticket_create_by = users.user_id JOIN department ON ticket.ticket_user_department = department.department_id WHERE ticket_create_at::date BETWEEN $1 AND $2",
+            text : "SELECT ticket.ticket_id, ticket.ticket_subject, ticket.ticket_description, ticket.ticket_status, ticket.ticket_priority, area.area_name as ticket_area, category.category_name as ticket_category, users.user_name as ticket_created_by, department.department_name as ticket_department, ticket.ticket_create_at, ticket.ticket_update_at FROM ticket JOIN area ON ticket.ticket_area = area.area_id JOIN category ON ticket.ticket_category = category.category_id JOIN users ON ticket.ticket_create_by = users.user_id JOIN department ON ticket.ticket_user_department = department.department_id WHERE ticket_create_at::date BETWEEN $1 AND $2",
             values: [startDate, endDate]
         }
         const result = await this._pool.query(query)        
