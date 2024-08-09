@@ -348,9 +348,8 @@ class TicketHandler {
 
             const enc = cryptoJS.AES.encrypt(JSON.stringify(data), process.env.SECRET)
             const host = req.get('host')
-            const protocol = req.protocol
 
-            const url = `${protocol}://${host}/Tickets/Export/${process.env.SALT}${enc}`
+            const url = `https://${host}/Tickets/Export/${process.env.SALT}${enc}`
 
             const response = {
                 error: false,
